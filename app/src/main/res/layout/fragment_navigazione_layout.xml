@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:context=".MainActivity">
+    <TextView
+        android:id="@+id/hiddenTextView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        />
+
+    <View
+        android:id="@+id/fillingView"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"></View>
+
+    <com.github.chrisbanes.photoview.PhotoView
+        android:layout_below="@+id/fillingView"
+        android:id="@+id/mappa"
+        android:layout_width="wrap_content"
+        android:layout_height="350dp"
+        android:layout_centerHorizontal="true"
+        android:visibility="visible"
+        tools:ignore="MissingConstraints" />
+
+
+    <LinearLayout
+        android:id="@+id/editRicercaLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mappa"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="X: " />
+
+        <EditText
+            android:id="@+id/inputX"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:inputType="number" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Y: " />
+
+        <EditText
+            android:id="@+id/inputY"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:inputType="number" />
+
+        <TextView
+            android:id="@+id/destinazioneAttuale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="..." />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/inviodati"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editRicercaLayout"
+        android:layout_centerHorizontal="true"
+        android:background="#006999"
+        android:textColor="@android:color/white"
+        android:textSize="20dp"
+        android:text="Inserisci destinazione" />
+
+    <LinearLayout
+        android:id="@+id/linearBottoni"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/inviodati">
+
+        <Button
+            android:id="@+id/cercaPercorsoButton"
+            android:layout_width="wrap_content"
+            android:padding="5dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@android:color/holo_green_light"
+            android:enabled="false"
+            android:text="Cerca percorso"
+            android:textColor="@android:color/white"
+            />
+
+        <Button
+            android:id="@+id/caricaIPercorsiButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:alpha="0.5"
+            android:background="@android:color/holo_red_light"
+            android:enabled="true"
+            android:text="Carica tutti i percorsi"
+            android:textColor="@android:color/white"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottoniPiano"
+        android:layout_below="@+id/linearBottoni"
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true">
+        <Button
+            android:id="@+id/piano1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:alpha="0.5"
+            android:background="@android:color/darker_gray"
+            android:enabled="false"
+            android:text="Piano 1"
+            android:textColor="@android:color/white"
+            />
+
+        <Button
+            android:id="@+id/piano2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:alpha="0.5"
+            android:background="@android:color/darker_gray"
+            android:enabled="true"
+            android:text="Piano 2"
+            android:textColor="@android:color/white"
+            />
+        <Button
+            android:id="@+id/piano3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:alpha="0.5"
+            android:background="@android:color/darker_gray"
+            android:enabled="true"
+            android:text="Piano 3"
+            android:textColor="@android:color/white"
+            />
+        <Button
+            android:id="@+id/pianof"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:alpha="0.5"
+            android:background="@android:color/darker_gray"
+            android:enabled="true"
+            android:text="Piano F"
+            android:textColor="@android:color/white"
+            />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

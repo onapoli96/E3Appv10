@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical|center_horizontal"
+    android:orientation="vertical"
+    android:background="@drawable/sfond"
+    >
+
+    <EditText
+        android:id="@+id/editCodice"
+        android:layout_width="250dp"
+        android:inputType="number"
+        android:layout_height="wrap_content"
+        android:hint="Codice biglietto..."
+        android:text=""></EditText>
+    <EditText
+        android:id="@+id/editNome"
+        android:shadowColor="@color/Aqua"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:hint="Nome..."
+        android:text=""></EditText>
+    <EditText
+        android:id="@+id/editCognome"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:hint="Cognome..."
+        android:text=""></EditText>
+
+    <Button
+        android:id="@+id/ricerca"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onclickBottone"
+        android:text="Login"
+        android:background="@color/Bisque"></Button>
+</LinearLayout>
