@@ -214,10 +214,6 @@ public class FragmentEmergenza extends Fragment  implements View.OnClickListener
 
             System.out.println(angoloDiRotazione);
             rotazioneAttuale = angoloDiRotazione;
-            //aggiorno la rotazione attuale
-            //rotazioneAttuale=gradi.get(contatore);
-
-
 
             contatore++;
             contatore = contatore % archi.size();

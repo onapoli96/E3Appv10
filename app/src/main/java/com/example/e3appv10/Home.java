@@ -222,10 +222,7 @@ public class Home extends AppCompatActivity
                     fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.add(R.id.fragmentContainer, fragmentEmergenza);
                     fragmentTransaction.commit();
-
                 }
-
-
             }
 
             @Override

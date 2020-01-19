@@ -21,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         editor = sharedPref.edit();
         loggato = sharedPref.getBoolean("loggato", false);
-        System.out.println(loggato);
         setContentView(R.layout.activity_main);
         if(loggato){
             Intent home = new Intent(MainActivity.this,Home.class);

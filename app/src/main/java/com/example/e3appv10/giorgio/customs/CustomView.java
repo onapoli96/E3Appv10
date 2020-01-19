@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.e3appv10.giorgio.Helper.Nodo;
 
@@ -21,6 +22,13 @@ public class CustomView extends View {
         this.esterno = new Paint();
         interno.setColor(Color.RED);
         esterno.setColor(Color.BLACK);
+        this.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("Ciaaaaaaaooooo");
+                Toast.makeText(context, "Hai cliccato sul nodo: " + nodo.getX()+" " +nodo.getY(), Toast.LENGTH_SHORT);
+            }
+        });
     }
 
     @Override
@@ -31,6 +39,7 @@ public class CustomView extends View {
         paint.setTextSize(30);
         canvas.drawText("X: "+nodo.getX()+"Y: "+ nodo.getY(), nodo.getX(),nodo.getY()-30, paint);
     }
+
 
 
     public Nodo getNodo() {

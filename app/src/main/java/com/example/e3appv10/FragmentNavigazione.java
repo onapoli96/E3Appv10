@@ -56,6 +56,7 @@ import org.jgrapht.graph.DefaultEdge;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -288,9 +289,8 @@ public class FragmentNavigazione extends Fragment implements TextWatcher {
 
     @Override
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-        Date date = new Date();
-        inviaMessaggio("pos",nome.toUpperCase()+" "+ cognome.toUpperCase()+" è passato dal beacon con id: "+ hiddenTextView.getText()+" al tempo "+ dateFormat.format(date) );
+        long tempo = Instant.now().getEpochSecond();
+        inviaMessaggio("pos",nome.toUpperCase()+" "+ cognome.toUpperCase()+" "+ hiddenTextView.getText()+" "+ tempo );
         newPath(hiddenTextView.getText().toString());
     }
 

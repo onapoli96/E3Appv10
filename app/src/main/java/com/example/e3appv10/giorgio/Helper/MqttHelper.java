@@ -21,12 +21,10 @@ public class MqttHelper {
     public MqttAndroidClient mqttAndroidClient;
 
     final String serverUri = "tcp://m24.cloudmqtt.com:16142";
-
-    final String clientId = "ExampleAndroidClient3";
-    final String subscriptionTopic = "client/+";
-
     final String username = "ftvtpagh";
     final String password = "pwVsR6nQqWa6";
+    final String clientId = "ExampleAndroidClient3";
+    final String subscriptionTopic = "client/+";
 
     public MqttHelper(Context context){
         mqttAndroidClient = new MqttAndroidClient(context, serverUri, clientId);
