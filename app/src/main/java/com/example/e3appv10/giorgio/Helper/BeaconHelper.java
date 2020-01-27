@@ -9,6 +9,8 @@ import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.e3appv10.FunzioniCambiaBeacon;
+
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
@@ -26,18 +28,15 @@ public class BeaconHelper implements BeaconConsumer, RangeNotifier {
     private Beacon nearestBeacon;
     private Region mRegion;
     private Context context;
-    private TextView segnaleReceived;
     private static final long DEFAULT_SCAN_PERIOD_MS = 1000l;
     private static final String ALL_BEACONS_REGION = "AllBeaconsRegion";
+    private FunzioniCambiaBeacon funzioniCambiaBeacon;
 
-    private int numActivity;
 
-    public BeaconHelper(Context context, TextView segnaleReceived, int numActivity) {
-
-        this.numActivity = numActivity;
+    public BeaconHelper(Context context, FunzioniCambiaBeacon funzioniCambiaBeacon) {
 
         this.context = context;
-        this.segnaleReceived = segnaleReceived;
+        this.funzioniCambiaBeacon = funzioniCambiaBeacon;
 
         mBeaconManager = BeaconManager.getInstanceForApplication(context);
 
@@ -89,21 +88,14 @@ public class BeaconHelper implements BeaconConsumer, RangeNotifier {
 
     @Override
     public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
-        String tutti = " ";
-        int i = 0;
+
         if (beacons.size() == 0) {
             //showToastMessage(context.getString(R.string.no_beacons_detected));
         }
-        if(numActivity == 0) {
-            for (Beacon beacon : beacons) {
-                i++;
-                int distanza = (int) (beacon.getDistance() * 100);
-                tutti = tutti + "ID: " + beacon.getId2().toString() + " - distanza: " + distanza + "\n";
-                segnaleReceived.setText(tutti);
-            }
-        }
-        else if (numActivity == 1){
-            segnaleReceived.setText(""+getMinimumDistance(beacons).getId2().toString());
+        if(funzioniCambiaBeacon != null && (beacons!=null) && beacons.size()>0) {
+            //notifico il beacon più vicino
+            String idBeacon = getMinimumDistance(beacons).getId2().toString();
+            funzioniCambiaBeacon.onChangeSource(idBeacon);
         }
     }
 
@@ -111,6 +103,7 @@ public class BeaconHelper implements BeaconConsumer, RangeNotifier {
     private Beacon getMinimumDistance(Collection<Beacon> beacons){
         double min = 0.0;
         boolean flag = true;
+        String tutti = " ";
         for(Beacon beacon: beacons){
             if(flag){
                 min = beacon.getDistance();
@@ -121,7 +114,11 @@ public class BeaconHelper implements BeaconConsumer, RangeNotifier {
                 nearestBeacon = beacon;
                 min = beacon.getDistance();
             }
+            int distanza = (int) (beacon.getDistance() * 100);
+            tutti = tutti + "ID: " + beacon.getId2().toString() + " - distanza: " + distanza + "\n";
         }
+        //dò delle informazioni su tutti i beacon rilevati
+        funzioniCambiaBeacon.infoBeaconsResived(tutti);
         return nearestBeacon;
 
     }

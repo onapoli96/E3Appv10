@@ -57,15 +57,12 @@ public class CaricaHashmapBeacon extends AsyncTask<String,Void,String> {
             JSONArray array = new JSONArray(result);
             for(int i = 0; i < array.length(); i++) {
                 JSONObject object = array.getJSONObject(i);
-
-                int x = (int)((Integer.parseInt(object.get("X").toString()) - 8 )* density);
-                int y = (int)((Integer.parseInt(object.get("Y").toString())-64)* density);
-
                 String idBeacon = object.get("IDBeacon").toString();
-                System.out.println("sono qui"+ x+" "+ y + " "+ idBeacon);
+                int x = Integer.parseInt(object.get("X").toString());
+                int y = Integer.parseInt(object.get("Y").toString());
                 Nodo n = new Nodo(x, y);
-
                 beaconNodo.put(idBeacon, n);
+                System.out.println("sono qui"+ x+" "+ y + " "+ idBeacon);
             }
 
         } catch (JSONException e) {
@@ -91,4 +88,5 @@ public class CaricaHashmapBeacon extends AsyncTask<String,Void,String> {
     public HashMap<String, Nodo> getHashMap(){
         return beaconNodo;
     }
+
 }

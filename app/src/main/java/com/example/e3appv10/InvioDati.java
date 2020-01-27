@@ -7,6 +7,8 @@ import android.support.annotation.RequiresApi;
 
 import com.example.e3appv10.giorgio.Helper.Edge;
 import com.example.e3appv10.giorgio.Helper.Nodo;
+import com.example.e3appv10.giorgio.customs.CustomViewMappa;
+import com.example.e3appv10.giorgio.customs.FunzioniSelezionaNodo;
 
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -26,11 +28,15 @@ import java.util.ArrayList;
 
 public class InvioDati extends AsyncTask<String,Void,String> {
     private Context context;
+    //la variabile flag viene utilizzata per sapere quando viene eseguito l'onPostexecute
+   // private boolean flag;
+
     private Graph<Nodo, DefaultEdge> grafo;
     private ArrayList<Nodo> nodi;
     private ArrayList<Edge<Nodo,String>> archi;
     private float density;
-
+    private ZoomLayout zoomLayout;
+    private FunzioniSelezionaNodo funzioniSelezionaNodo;
 
     public InvioDati(Context context, float density){
         this.context = context;
@@ -38,7 +44,18 @@ public class InvioDati extends AsyncTask<String,Void,String> {
         this.grafo = new DefaultDirectedGraph<>(DefaultEdge.class);
         nodi = new ArrayList<>();
         archi = new ArrayList<>();
+        this.zoomLayout = null;
+        this.funzioniSelezionaNodo = null;
+    }
 
+    public InvioDati(Context context, float density, ZoomLayout zoomLayout, FunzioniSelezionaNodo funzioniSelezionaNodo){
+        this.context = context;
+        this.density = density;
+        this.grafo = new DefaultDirectedGraph<>(DefaultEdge.class);
+        nodi = new ArrayList<>();
+        archi = new ArrayList<>();
+        this.zoomLayout = zoomLayout;
+        this.funzioniSelezionaNodo = funzioniSelezionaNodo;
     }
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -62,20 +79,17 @@ public class InvioDati extends AsyncTask<String,Void,String> {
     @Override
     protected void onPostExecute(String result) {
 
+
         try {
             JSONArray array = new JSONArray(result);
             for(int i = 0; i < array.length(); i++) {
                 JSONObject object = array.getJSONObject(i);
-
-                int x1 = (int)((Integer.parseInt(object.get("X1").toString()) - 8 )* density);
-                int y1 = (int)((Integer.parseInt(object.get("Y1").toString())-64)* density);
-                int x2 = (int)((Integer.parseInt(object.get("X2").toString()) - 8 ) * density);
-                int y2 = (int)((Integer.parseInt(object.get("Y2").toString())-64) * density);
-
+                int x1 = Integer.parseInt(object.get("X1").toString());
+                int y1 = Integer.parseInt(object.get("Y1").toString());
+                int x2 = Integer.parseInt(object.get("X2").toString());
+                int y2 = Integer.parseInt(object.get("Y2").toString());
                 Nodo n1 = new Nodo(x1, y1);
                 Nodo n2 = new Nodo(x2, y2);
-
-
                 Edge<Nodo,String> e1;
                 e1 = new Edge<>(n1,n2);
                 archi.add(e1);
@@ -85,10 +99,15 @@ public class InvioDati extends AsyncTask<String,Void,String> {
                 if(!nodi.contains(n2)) {
                     nodi.add(n2);
                 }
+
+                if(zoomLayout != null && funzioniSelezionaNodo != null){
+                    CustomViewMappa cv = new CustomViewMappa(context, 50, n1, funzioniSelezionaNodo, density);
+                    CustomViewMappa cv1 = new CustomViewMappa(context, 50,n2, funzioniSelezionaNodo, density);
+                    zoomLayout.addView(cv);
+                    zoomLayout.addView(cv1);
+                }
             }
-
-
-
+            System.out.println("SONO NELL'ONPOSTEXECUTE: "+ nodi);
         } catch (JSONException e) {
             e.printStackTrace();
         }

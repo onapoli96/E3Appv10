@@ -44,6 +44,7 @@ import com.example.e3appv10.giorgio.customs.CustomView;
 import com.example.e3appv10.giorgio.customs.CustomViewEdge;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.github.chrisbanes.photoview.PhotoViewAttacher;
+import com.google.gson.Gson;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
@@ -63,8 +64,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.zip.Inflater;
 
-public class FragmentNavigazione extends Fragment implements TextWatcher {
+public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeacon {
 
+    private HashMap<String,Nodo> hashMap;
     private BeaconHelper beaconHelper;
     private static final String ip = "151.236.56.24";
     private Graph<Nodo, DefaultEdge> grafo;
@@ -112,19 +114,18 @@ public class FragmentNavigazione extends Fragment implements TextWatcher {
         density = metrics.density;
         editX = view.findViewById(R.id.inputX);
         editY = view.findViewById(R.id.inputY);
-        inserisciDestinazione = (Button) view.findViewById(R.id.inviodati);
+        /*inserisciDestinazione = (Button) view.findViewById(R.id.inviodati);
+
 
         inserisciDestinazione.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 cambiaDestinazione(v);
             }
-        });
-        hiddenTextView = (TextView) view.findViewById(R.id.hiddenTextView);
-        hiddenTextView.addTextChangedListener(this);
-        beaconHelper = new BeaconHelper(view.getContext(), hiddenTextView, 1);
+        });*/
+        beaconHelper = new BeaconHelper(view.getContext(), this);
 
-        cercaPercorsoButton = (Button) view.findViewById(R.id.cercaPercorsoButton);
+        /*cercaPercorsoButton = (Button) view.findViewById(R.id.cercaPercorsoButton);
 
         cercaPercorsoButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,68 +133,34 @@ public class FragmentNavigazione extends Fragment implements TextWatcher {
 
                 detectBeaconInMap(v);
             }
-        });
+        });*/
 
+        /*
         stopReadingBeaconsButton = (Button) view.findViewById(R.id.caricaIPercorsiButton);
         stopReadingBeaconsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 caricaGrafo(v);
             }
-        });
+        });*/
 
         imageView =  (PhotoView) view.findViewById(R.id.mappa);
 
-        bottoniPiano = new Button[4];
-        bottoniPiano[0] = (Button) view.findViewById(R.id.piano1);
-        bottoniPiano[1] = (Button) view.findViewById(R.id.piano2);
-        bottoniPiano[2] = (Button) view.findViewById(R.id.piano3);
-        bottoniPiano[3] = (Button) view.findViewById(R.id.pianof);
-
-        bottoniPiano[0].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cambiaPiano(v);
-            }
-        });
-        bottoniPiano[1].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cambiaPiano(v);
-            }
-        });
-        bottoniPiano[2].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cambiaPiano(v);
-            }
-        });
-        bottoniPiano[3].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cambiaPiano(v);
-            }
-        });
-
-
-
         // Per settare dinamicamente un immagine
-        imageView.setImageResource(R.drawable.pontedicoperta);
-        Drawable drawable = getResources().getDrawable(R.drawable.pontedicoperta);
+        imageView.setImageResource(R.drawable.pianof);
+        Drawable drawable = getResources().getDrawable(R.drawable.pianof);
         imageView.setImageDrawable(drawable);
 
         // Attach a PhotoViewAttacher, which takes care of all of the zooming functionality.
         mAttacher = new PhotoViewAttacher(imageView);
 
-
-
         ambp = (BitmapDrawable) imageView.getDrawable();
         bitmap = Bitmap.createBitmap(1000,1000, Bitmap.Config.RGB_565);
         bitmap = ambp.getBitmap();
-        invio = (InvioDati) new InvioDati(view.getContext(), density).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=1");
-        grafo = invio.getGrafo();
-        caricaHashmap = (CaricaHashmapBeacon) new CaricaHashmapBeacon(view.getContext(), density).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaHashmap.php?piano=1");
 
+        grafo = ((Home) getActivity()).getGrafo();
+        destinazione = ((Home) getActivity()).getDestinazione();
+        hashMap = ((Home) getActivity()).getHashMap();
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -207,6 +174,7 @@ public class FragmentNavigazione extends Fragment implements TextWatcher {
         cognome = sharedPref.getString("cognome", "user");
         gruppo = sharedPref.getString("gruppo", "--");
         cabina = sharedPref.getString("cabina", "--");
+        detectBeaconInMap();
 
         return view;
     }
@@ -282,25 +250,6 @@ public class FragmentNavigazione extends Fragment implements TextWatcher {
         beaconHelper.clear();
     }
 
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-    }
-
-    @Override
-    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        long tempo = Instant.now().getEpochSecond();
-        inviaMessaggio("pos",nome.toUpperCase()+" "+ cognome.toUpperCase()+" "+ hiddenTextView.getText()+" "+ tempo );
-        newPath(hiddenTextView.getText().toString());
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {
-
-    }
-
-
-
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void drawGraph(Graph<Nodo,DefaultEdge> graph){
 
@@ -311,16 +260,15 @@ public class FragmentNavigazione extends Fragment implements TextWatcher {
 
 
         for (Nodo nod: graph.vertexSet()) {
-            CustomView cv = new CustomView(getView().getContext(), nod);
+            CustomView cv = new CustomView(getView().getContext(), nod, density);
             cv.draw(canvas);
             graph.edgesOf(nod);
             for (DefaultEdge e : graph.outgoingEdgesOf(nod)){
                 Nodo n2 = graph.getEdgeTarget(e);
-                CustomViewEdge cve = new CustomViewEdge(getView().getContext(), nod , n2);
+                CustomViewEdge cve = new CustomViewEdge(getView().getContext(), nod , n2, density);
                 cve.draw(canvas);
             }
         }
-        //grafo.get
         imageView.setImageBitmap(operations);
 
     }
@@ -335,10 +283,10 @@ public class FragmentNavigazione extends Fragment implements TextWatcher {
         Nodo start = toDraw.get(0);
 
         for(Nodo nod: toDraw) {
-            CustomView cv = new CustomView(getView().getContext(), nod);
+            CustomView cv = new CustomView(getView().getContext(), nod, density);
             cv.changeColor();
             cv.draw(canvas);
-            CustomViewEdge cve = new CustomViewEdge(getView().getContext(), start, nod );
+            CustomViewEdge cve = new CustomViewEdge(getView().getContext(), start, nod, density );
             cve.draw(canvas);
             start = nod;
         }
@@ -347,20 +295,15 @@ public class FragmentNavigazione extends Fragment implements TextWatcher {
     }
 
     public void newPath(String s) {
-        grafo = invio.getGrafo();
-        ArrayList<Nodo> allVertex = invio.getAllNodes();
-        if(allVertex.size() != 0) {
+        if(!grafo.vertexSet().isEmpty()) {
             s = s.substring(s.length()-5);
             DijkstraShortestPath<Nodo, DefaultEdge> dijkstraAlg = new DijkstraShortestPath<>(grafo);
-            HashMap<String,Nodo> hashMap = caricaHashmap.getHashMap();
-
             Nodo sorgente = hashMap.get(s);
             ShortestPathAlgorithm.SingleSourcePaths<Nodo, DefaultEdge> iPaths = dijkstraAlg.getPaths(sorgente);
             if(!grafo.containsVertex(destinazione)){
                 showToastMessage("Devi prima inserire una destinazione valida");
                 return;
             }
-
             List<Nodo> path = iPaths.getPath(destinazione).getVertexList();
             ArrayList<Nodo> result = new ArrayList<>(path);
 
@@ -376,11 +319,8 @@ public class FragmentNavigazione extends Fragment implements TextWatcher {
         }
     }
 
-
-
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void caricaGrafo(View v){
-        grafo = invio.getGrafo();
         beaconHelper.stopDetectingBeacons();
 
         if(!grafo.vertexSet().isEmpty()) {
@@ -391,92 +331,25 @@ public class FragmentNavigazione extends Fragment implements TextWatcher {
         }
     }
 
-    public void cambiaPiano(View v){
-        Button bottoneCliccato = (Button) v;
-
-        if(bottoneCliccato.getText().equals("Piano 1")){
-
-            imageView.setImageResource(R.drawable.pontedicoperta);
-            mAttacher.update();
-            invio = (InvioDati) new InvioDati(getView().getContext(), density).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=1");
-            caricaHashmap = (CaricaHashmapBeacon) new CaricaHashmapBeacon(getView().getContext(), density).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaHashmap.php?piano=1");
-            beaconHelper.stopDetectingBeacons();
-
-            bottoniPiano[0].setEnabled(false);
-            bottoniPiano[1].setEnabled(true);
-            bottoniPiano[2].setEnabled(true);
-            bottoniPiano[3].setEnabled(true);
-        }
-        if(bottoneCliccato.getText().equals("Piano 2")){
-            imageView.setImageResource(R.drawable.primopontedisovrastruttura);;
-            mAttacher.update();
-            invio = (InvioDati) new InvioDati(getView().getContext(), density).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=2");
-            caricaHashmap = (CaricaHashmapBeacon) new CaricaHashmapBeacon(getView().getContext(), density).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaHashmap.php?piano=2");
-            beaconHelper.stopDetectingBeacons();
-
-            bottoniPiano[0].setEnabled(true);
-            bottoniPiano[1].setEnabled(false);
-            bottoniPiano[2].setEnabled(true);
-            bottoniPiano[3].setEnabled(true);
-        }
-        if(bottoneCliccato.getText().equals("Piano 3")) {
-            imageView.setImageResource(R.drawable.pontedicomando);;
-            mAttacher.update();
-            invio = (InvioDati) new InvioDati(getView().getContext(), density).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=3");
-            caricaHashmap = (CaricaHashmapBeacon) new CaricaHashmapBeacon(getView().getContext(), density).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaHashmap.php?piano=3");
-            beaconHelper.stopDetectingBeacons();
-
-
-            bottoniPiano[0].setEnabled(true);
-            bottoniPiano[1].setEnabled(true);
-            bottoniPiano[2].setEnabled(false);
-            bottoniPiano[3].setEnabled(true);
-        }
-        if(bottoneCliccato.getText().equals("Piano F")) {
-            imageView.setImageResource(R.drawable.pianof);
-            mAttacher.update();
-            invio = (InvioDati) new InvioDati(getView().getContext(), density).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=4");
-            caricaHashmap = (CaricaHashmapBeacon) new CaricaHashmapBeacon(getView().getContext(), density).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaHashmap.php?piano=4");
-            beaconHelper.stopDetectingBeacons();
-
-
-            bottoniPiano[0].setEnabled(true);
-            bottoniPiano[1].setEnabled(true);
-            bottoniPiano[2].setEnabled(true);
-            bottoniPiano[3].setEnabled(false);
-        }
-        editX.setText("");
-        editY.setText("");
-        ambp = (BitmapDrawable) imageView.getDrawable();
-        bitmap = Bitmap.createBitmap(1000,1000, Bitmap.Config.RGB_565);
-        bitmap = ambp.getBitmap();
-    }
-
-    public void cambiaDestinazione(View v){
-        int x = Integer.parseInt(editX.getText().toString());
-        int y = Integer.parseInt(editY.getText().toString());
-
-        Nodo daCercare = new Nodo(x,y);
-        if(grafo.containsVertex(daCercare)){
-            TextView destinazioneAttuale = getView().findViewById(R.id.destinazioneAttuale);
-            destinazioneAttuale.setText("Destinazione attuale X: "+x+" Y: "+y);
-            cercaPercorsoButton.setEnabled(true);
-            destinazione = daCercare;
-        }
-        else {
-            showToastMessage("Il nodo non è presente nel grafo");
-        }
-    }
-
-    public void detectBeaconInMap(View v){
+    //funzione associata al bottune
+   /* public void detectBeaconInMap(View v){
         System.out.println("Ci arrivo");
         askForBluetooth();
         beaconHelper.startDetectingBeacons();
         cercaPercorsoButton.setEnabled(true);
         cercaPercorsoButton.setAlpha(1);
 
-    }
+    }*/
 
+    public void detectBeaconInMap(){
+        System.out.println("Ci arrivo");
+        askForBluetooth();
+        System.out.println("Nodo destinazione: "+destinazione);
+        beaconHelper.startDetectingBeacons();
+        //cercaPercorsoButton.setEnabled(true);
+        //cercaPercorsoButton.setAlpha(1);
+
+    }
     private void inviaMessaggio(String topic, String messaggio){
         MqttMessage message = new MqttMessage(messaggio.getBytes());
         try {
@@ -486,5 +359,15 @@ public class FragmentNavigazione extends Fragment implements TextWatcher {
         }
     }
 
+    @Override
+    public void onChangeSource(String idBeacon) {
+        long tempo = Instant.now().getEpochSecond();
+        inviaMessaggio("pos",nome.toUpperCase()+" "+ cognome.toUpperCase()+" "+ idBeacon+" "+ tempo );
+        newPath(idBeacon);
+    }
 
+    @Override
+    public void infoBeaconsResived(String infoBeacon) {
+        System.out.println(infoBeacon);
+    }
 }

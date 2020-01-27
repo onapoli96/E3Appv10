@@ -67,14 +67,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public class Home extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class Home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    private HashMap<String,Nodo> hashMap;
+    private Nodo destinazione;
     private SharedPreferences sharedPref;
-
     private TextView nomeUtente;
     private TextView gruppoecabina;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
+    private Graph<Nodo, DefaultEdge> grafo;
 
     MqttHelper mqttHelper;
 
@@ -83,7 +84,9 @@ public class Home extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
+        grafo = null;
+        destinazione = null;
+        hashMap = null;
         Toolbar toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
@@ -96,8 +99,11 @@ public class Home extends AppCompatActivity
 
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
-        FragmentNavigazione fragmentNavigazione = new FragmentNavigazione();
-        fragmentTransaction.add(R.id.fragmentContainer, fragmentNavigazione);
+
+        //Seleziono il fragment che si dovrà selezionare all'avvio dell'activityy home
+        FragmentMappa fragmentMappa = new FragmentMappa();
+        fragmentTransaction.add(R.id.fragmentContainer, fragmentMappa);
+
         fragmentTransaction.commit();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,6 +174,7 @@ public class Home extends AppCompatActivity
         FragmentAnnunci fragmentAnnunci = new FragmentAnnunci();
         FragmentEventi fragmentEventi = new FragmentEventi();
         FragmentNavigazione fragmentNavigazione = new FragmentNavigazione();
+        FragmentMappa fragmentMappa = new FragmentMappa();
 
         Fragment fragment = fragmentManager.findFragmentById(R.id.fragmentContainer);
         if(fragment!=null){
@@ -177,7 +184,7 @@ public class Home extends AppCompatActivity
         }
         if (id == R.id.miaposizione) {
             fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.add(R.id.fragmentContainer, fragmentNavigazione);
+            fragmentTransaction.add(R.id.fragmentContainer, fragmentMappa);
             fragmentTransaction.commit();
         } else if (id == R.id.annunci) {
             fragmentTransaction = fragmentManager.beginTransaction();
@@ -192,6 +199,44 @@ public class Home extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void cambiaFragment(String nomeFragment) {
+
+        fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction;
+        FragmentAnnunci fragmentAnnunci = new FragmentAnnunci();
+        FragmentEventi fragmentEventi = new FragmentEventi();
+        FragmentNavigazione fragmentNavigazione = new FragmentNavigazione();
+        FragmentMappa fragmentMappa = new FragmentMappa();
+
+        Fragment fragment = fragmentManager.findFragmentById(R.id.fragmentContainer);
+        if(fragment!=null){
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.remove(fragment);
+            fragmentTransaction.commit();
+        }
+        if (nomeFragment.equals("navigazione")) {
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.fragmentContainer, fragmentNavigazione);
+            fragmentTransaction.commit();
+        } else if (nomeFragment.equals("annunci")) {
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.fragmentContainer, fragmentAnnunci);
+            fragmentTransaction.commit();
+        } else if (nomeFragment.equals("eventi")) {
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.fragmentContainer, fragmentEventi);
+            fragmentTransaction.commit();
+        }
+        else if (nomeFragment.equals("mappa")) {
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.fragmentContainer, fragmentMappa);
+            fragmentTransaction.commit();
+        }
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
     }
 
     private void startMqtt() {
@@ -232,4 +277,27 @@ public class Home extends AppCompatActivity
         });
     }
 
+    public Graph getGrafo(){
+        return grafo;
+    }
+
+    public void setGrafo(Graph g){
+        grafo=g;
+    }
+
+    public Nodo getDestinazione(){
+        return destinazione;
+    }
+
+    public void setDestinazione(Nodo d){
+        destinazione = d;
+    }
+
+    public HashMap<String, Nodo> getHashMap() {
+        return hashMap;
+    }
+
+    public void setHashMap(HashMap<String, Nodo> hashMap) {
+        this.hashMap = hashMap;
+    }
 }
