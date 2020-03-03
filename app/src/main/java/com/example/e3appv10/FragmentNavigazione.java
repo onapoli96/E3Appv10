@@ -94,6 +94,7 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
     private String cognome;
     private String gruppo;
     private String cabina;
+    private int codice;
 
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
@@ -170,6 +171,7 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
         mqttHelper = new MqttHelper(view.getContext().getApplicationContext());
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(view.getContext());
+        codice = sharedPref.getInt("codice", 0);
         nome = sharedPref.getString("nome", "user");
         cognome = sharedPref.getString("cognome", "user");
         gruppo = sharedPref.getString("gruppo", "--");
@@ -281,7 +283,7 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
         canvas.drawBitmap(bitmap,0,0,null);
 
         Nodo start = toDraw.get(0);
-
+        inviaMessaggio("pos/"+codice, start.getX()+ " "+ start.getY());
         for(Nodo nod: toDraw) {
             CustomView cv = new CustomView(getView().getContext(), nod, density);
             cv.changeColor();

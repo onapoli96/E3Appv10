@@ -44,6 +44,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.e3appv10.giorgio.Helper.BeaconHelper;
 import com.example.e3appv10.giorgio.Helper.Nodo;
 import com.example.e3appv10.giorgio.customs.CustomViewEdge;
 
@@ -53,7 +54,9 @@ import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class FragmentEmergenza extends Fragment  implements View.OnClickListener {
+public class FragmentEmergenza extends Fragment  implements View.OnClickListener,FunzioniCambiaBeacon{
+
+    private BeaconHelper beaconHelper;
     private View view;
     private SensorManager sensorManager;
     private Sensor giroscopio;
@@ -79,6 +82,12 @@ public class FragmentEmergenza extends Fragment  implements View.OnClickListener
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        //beaconHelper = new BeaconHelper(view.getContext(), this);
+        //beaconHelper.startDetectingBeacons();
+
+
+
+
         view = inflater.inflate(R.layout.fragment_emergenza_layout, container, false);
         Button b = (Button) view.findViewById(R.id.cambiaArco);
         b.setOnClickListener(this);
@@ -302,7 +311,17 @@ public class FragmentEmergenza extends Fragment  implements View.OnClickListener
             }
             return (float) angolo;
         }
+
+    @Override
+    public void onChangeSource(String idBeacon) {
+
     }
+
+    @Override
+    public void infoBeaconsResived(String infoBeacon) {
+        System.out.println(infoBeacon);
+    }
+}
 
 
 
