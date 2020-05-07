@@ -78,6 +78,9 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     private Graph<Nodo, DefaultEdge> grafo;
 
     MqttHelper mqttHelper;
+    private String gruppo, cabina;
+    private String topic;
+
 
 
     @Override
@@ -132,8 +135,9 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         String nome = sharedPref.getString("nome", "user");
         String cognome = sharedPref.getString("cognome", "user");
-        String gruppo = sharedPref.getString("gruppo", "--");
-        String cabina = sharedPref.getString("cabina", "--");
+        gruppo = sharedPref.getString("gruppo", "--");
+        cabina = sharedPref.getString("cabina", "--");
+        topic = sharedPref.getString("topic", "msg/+");
 
         View menuLaterale = navigationView.getHeaderView(0);
         nomeUtente = menuLaterale.findViewById(R.id.nomeUtente);
@@ -240,7 +244,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     }
 
     private void startMqtt() {
-        mqttHelper = new MqttHelper(getApplicationContext());
+        mqttHelper = new MqttHelper(getApplicationContext(),topic);
 
         mqttHelper.setCallback(new MqttCallbackExtended() {
             @Override

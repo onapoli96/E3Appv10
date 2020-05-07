@@ -96,6 +96,9 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
     private String cabina;
     private int codice;
 
+    private String topic;
+
+
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     private static final int REQUEST_ENABLE_BLUETOOTH = 1;
@@ -168,7 +171,7 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
             askForLocationPermissions();
             askForBluetooth();
         }
-        mqttHelper = new MqttHelper(view.getContext().getApplicationContext());
+        mqttHelper = new MqttHelper(view.getContext().getApplicationContext(),topic);
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(view.getContext());
         codice = sharedPref.getInt("codice", 0);

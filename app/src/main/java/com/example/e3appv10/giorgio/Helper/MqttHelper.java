@@ -20,13 +20,16 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 public class MqttHelper {
     public MqttAndroidClient mqttAndroidClient;
 
+
     final String serverUri = "tcp://m24.cloudmqtt.com:16142";
     final String username = "ftvtpagh";
     final String password = "pwVsR6nQqWa6";
     final String clientId = "ExampleAndroidClient3";
-    final String subscriptionTopic = "client/+";
+    private String topic;
 
-    public MqttHelper(Context context){
+    public MqttHelper(Context context, String topic){
+        this.topic = topic;
+        System.out.println("questo è il topic nell'helper"+topic);
         mqttAndroidClient = new MqttAndroidClient(context, serverUri, clientId);
         connect();
     }
@@ -73,13 +76,28 @@ public class MqttHelper {
         }
     }
 
+    public void disconnect() throws MqttException {
+        mqttAndroidClient.disconnect(null, new IMqttActionListener() {
+            @Override
+            public void onSuccess(IMqttToken iMqttToken) {
+                System.out.println("disconnessione avvenuta");
+            }
+
+            @Override
+            public void onFailure(IMqttToken iMqttToken, Throwable throwable) {
+
+            }
+        });
+
+    }
+
 
     private void subscribeToTopic() {
         try {
-            mqttAndroidClient.subscribe(subscriptionTopic, 0, null, new IMqttActionListener() {
+            mqttAndroidClient.subscribe(topic, 0, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.w("Mqtt","Subscribed!");
+                    Log.w("Mqtt","Subscribed! il topic è "+topic);
                 }
 
                 @Override
@@ -93,5 +111,6 @@ public class MqttHelper {
             ex.printStackTrace();
         }
     }
+
 }
 

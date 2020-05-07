@@ -52,6 +52,7 @@ public class Loginjava extends AsyncTask<String,Void,String>{
     @Override
     protected void onPostExecute(String result) {
         String ce = "";
+        int codice = 0;
         String nome = "";
         String cognome = "";
         String gruppo = "";
@@ -59,6 +60,7 @@ public class Loginjava extends AsyncTask<String,Void,String>{
         try {
             JSONObject jObject = new JSONObject(result);
             ce = jObject.getString("ce");
+            codice = jObject.getInt("codice");
             nome = jObject.getString("nome");
             cognome = jObject.getString("cognome");
             gruppo = jObject.getString("gruppo");
@@ -74,10 +76,12 @@ public class Loginjava extends AsyncTask<String,Void,String>{
             editor = sharedPref.edit();
 
             editor.putBoolean("loggato", true);
+            editor.putInt("codice", codice);
             editor.putString("nome", nome);
             editor.putString("cognome", cognome);
             editor.putString("gruppo", gruppo);
             editor.putString("cabina", cabina);
+            editor.putString("topic", "msg/"+gruppo+"/"+codice);
             editor.commit();
             Intent home = new Intent(context, com.example.e3appv10.Home.class);
             context.startActivity(home);
