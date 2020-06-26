@@ -8,6 +8,37 @@
         android:id="@+id/container"
         android:layout_width="600dp"
         android:layout_height="794dp"></RelativeLayout>
+    <LinearLayout
+        android:layout_below="@id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/bottonePianoF"
+            android:layout_width="wrap_content"
+            android:padding="5dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@android:color/holo_green_light"
+            android:text="Piano F"
+            android:textColor="@android:color/white"
+            />
+
+        <Button
+            android:id="@+id/bottonePianoComando"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:alpha="0.5"
+            android:background="@android:color/holo_red_light"
+            android:enabled="true"
+            android:text="Piano Comando"
+            android:textColor="@android:color/white"
+            />
+    </LinearLayout>
 
 
 </RelativeLayout>

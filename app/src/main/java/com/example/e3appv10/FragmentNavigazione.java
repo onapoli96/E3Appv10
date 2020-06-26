@@ -102,6 +102,8 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     private static final int REQUEST_ENABLE_BLUETOOTH = 1;
+    private static final int PINO_F = R.drawable.pianof;
+    private static final int PINO_COMANDO = R.drawable.pontedicomando;
     MqttHelper mqttHelper;
 
     private View view;
@@ -116,8 +118,8 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
 
         metrics = getResources().getDisplayMetrics();
         density = metrics.density;
-        editX = view.findViewById(R.id.inputX);
-        editY = view.findViewById(R.id.inputY);
+        //editX = view.findViewById(R.id.inputX);
+        //editY = view.findViewById(R.id.inputY);
         /*inserisciDestinazione = (Button) view.findViewById(R.id.inviodati);
 
 
@@ -180,8 +182,15 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
         gruppo = sharedPref.getString("gruppo", "--");
         cabina = sharedPref.getString("cabina", "--");
         detectBeaconInMap();
+        //cambiaPiano(PINO_COMANDO);
 
         return view;
+    }
+
+    public void cambiaPiano(int piano){
+        imageView.setImageResource(piano);
+        Drawable drawable = getResources().getDrawable(piano);
+        imageView.setImageDrawable(drawable);
     }
 
     @Override

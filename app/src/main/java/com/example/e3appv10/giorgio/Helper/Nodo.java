@@ -6,6 +6,7 @@ import java.util.Objects;
 public class Nodo {
     private int x;
     private int y;
+    private int piano;
 
     @Override
     public int hashCode() {
@@ -15,6 +16,12 @@ public class Nodo {
     public Nodo(int x, int y){
         this.x = x;
         this.y = y;
+    }
+
+    public Nodo(int x, int y, int piano){
+        this.x = x;
+        this.y = y;
+        this.piano = piano;
     }
 
     public void setY(int y) {
@@ -28,11 +35,9 @@ public class Nodo {
             return true;
         }
         if (obj == null) {
-            System.out.println("Per qualche motivo vado qui ");
             return false;
         }
         if (getClass() != obj.getClass()) {
-            System.out.println("Anzi qui ");
             return false;
         }
         Nodo other = (Nodo) obj;
@@ -46,6 +51,13 @@ public class Nodo {
     }
 
 
+    public int getPiano() {
+        return piano;
+    }
+
+    public void setPiano(int piano) {
+        this.piano = piano;
+    }
 
     public int getY() {
         return y;

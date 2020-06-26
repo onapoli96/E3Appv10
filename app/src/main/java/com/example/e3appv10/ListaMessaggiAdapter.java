@@ -49,6 +49,11 @@ class ListaMessaggiAdapter extends BaseAdapter {
 
         TextView orariomessaggio = (TextView)   view.findViewById(R.id.orariomessaggio);
         TextView messaggio = (TextView)   view.findViewById(R.id.messaggio);
+        TextView nome = (TextView)   view.findViewById(R.id.nome);
+        TextView cognome = (TextView)   view.findViewById(R.id.cognome);
+        nome.setText(messaggi.get(i).getNome());
+        cognome.setText(messaggi.get(i).getCognome());
+        System.out.println("MESSAGGI: "+messaggi.get(i).getMessaggio());
         messaggio.setText(messaggi.get(i).getMessaggio());
         orariomessaggio.setText(messaggi.get(i).getOrario());
         System.out.println("sono nel metodo getView");

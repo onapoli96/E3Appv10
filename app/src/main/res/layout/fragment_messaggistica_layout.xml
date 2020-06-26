@@ -1,31 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
+    android:id="@+id/relative"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-    <View
-        android:id="@+id/fillingView"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"></View>
-    <Button
-        android:id="@+id/richiedi_assistenza"
+    android:layout_height="match_parent">
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#DA4040"
-        android:text="Richiedi assistenza"
-        android:textSize="25dp"/>
+        android:orientation="vertical">
+        <View
+            android:id="@+id/fillingView"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"></View>
+        <Button
+            android:id="@+id/richiedi_assistenza"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#DA4040"
+            android:text="Richiedi assistenza"
+            android:textSize="25dp"/>
 
-    <TextView
+        <TextView
+            android:layout_width="match_parent"
+            android:text="Comunicazioni"
+            android:textSize="25dp"
+            android:layout_height="wrap_content" />
+        <ListView
+            android:id="@+id/listamessaggi"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:divider="@color/Bisque"
+            android:dividerHeight="2dp"
+            android:footerDividersEnabled="true"
+            android:paddingBottom="200dp"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:text="Comunicazioni"
-        android:textSize="25dp"
-        android:layout_height="wrap_content" />
-    <ListView
-        android:id="@+id/listamessaggi"
-        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:divider="@color/Bisque"
-        android:dividerHeight="2dp"
-        android:footerDividersEnabled="true" />
-</LinearLayout>
+        android:orientation="horizontal"
+        >
+        <EditText
+            android:background="@color/Bisque"
+            android:layout_width="300dp"
+            android:layout_height="200dp" />
+        <Button
+            android:text="INVIA"
+            android:background="@color/Aquamarine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</RelativeLayout>

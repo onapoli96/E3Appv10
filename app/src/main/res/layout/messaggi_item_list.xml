@@ -4,17 +4,53 @@
     android:layout_width="match_parent"
     android:layout_height="60dp"
     >
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/Red"
+            >
+            <TextView
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:layout_margin="2dp"
+                android:background="@color/Bisque"
+                android:id="@+id/nome"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                />
+            <TextView
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:layout_margin="2dp"
+                android:background="@color/Bisque"
+                android:id="@+id/cognome"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@color/WhiteSmoke"
+            >
+            <TextView
+                android:background="@color/Bisque"
+                android:id="@+id/orariomessaggio"
+                android:layout_width="60dp"
+                android:layout_height="20dp"
+               />
 
-    <TextView
-        android:background="@color/Bisque"
-        android:id="@+id/orariomessaggio"
-        android:layout_width="60dp"
-        android:layout_height="20dp"
-       />
-
-    <TextView
-        android:id="@+id/messaggio"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp" />
-
+            <TextView
+                android:id="@+id/messaggio"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp" />
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

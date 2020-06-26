@@ -19,12 +19,12 @@
         android:layout_below="@+id/fillingView"
         android:id="@+id/mappa"
         android:layout_width="wrap_content"
-        android:layout_height="350dp"
+        android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:visibility="visible"
         tools:ignore="MissingConstraints" />
 
-
+    <!--
     <LinearLayout
         android:id="@+id/editRicercaLayout"
         android:layout_width="match_parent"
@@ -168,6 +168,6 @@
             />
 
     </LinearLayout>
-
+-->
 
 </RelativeLayout>

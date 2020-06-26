@@ -1,10 +1,12 @@
 package com.example.e3appv10;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.AsyncTask;
 import android.util.DisplayMetrics;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.os.Bundle;
@@ -54,6 +56,21 @@ public class FragmentMappa extends Fragment implements FunzioniSelezionaNodo {
 
         container.addView(zoom);
 
+        view.findViewById(R.id.bottonePianoComando).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cambiaPianoComando(v);
+            }
+        });
+
+        view.findViewById(R.id.bottonePianoF).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("SONO NEL ONCLICK");
+                cambiaPianoF(v);
+            }
+        });
+
         return view;
     }
 
@@ -64,6 +81,28 @@ public class FragmentMappa extends Fragment implements FunzioniSelezionaNodo {
         ((Home) getActivity()).setHashMap(caricaHashmap.getHashMap());
         ((Home) getActivity()).setGrafo(grafo);
         ((Home) getActivity()).cambiaFragment("navigazione");
+    }
+
+    public void cambiaPianoF(View v){
+        System.out.println("SONO NEL F");
+        zoom.setBackgroundResource(R.drawable.pianof);
+
+        caricaHashmap = (CaricaHashmapBeacon) new CaricaHashmapBeacon(view.getContext(), density).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaHashmap.php?piano=4");
+        invio = (InvioDati) new InvioDati(view.getContext(), density, zoom, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=4");
+        container.removeAllViews();
+        zoom.removeAllViews();
+        container.addView(zoom);
+    }
+
+    public void cambiaPianoComando(View v){
+        System.out.println("SONO NEL PONTE");
+        zoom.setBackgroundResource(R.drawable.pontedicomando);
+
+        caricaHashmap = (CaricaHashmapBeacon) new CaricaHashmapBeacon(view.getContext(), density).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaHashmap.php?piano=3");
+        invio = (InvioDati) new InvioDati(view.getContext(), density, zoom, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=3");
+        container.removeAllViews();
+        zoom.removeAllViews();
+        container.addView(zoom);
     }
 }
 
