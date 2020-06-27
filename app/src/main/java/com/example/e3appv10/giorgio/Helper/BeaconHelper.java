@@ -28,7 +28,7 @@ public class BeaconHelper implements BeaconConsumer, RangeNotifier {
     private Beacon nearestBeacon;
     private Region mRegion;
     private Context context;
-    private static final long DEFAULT_SCAN_PERIOD_MS = 1000l;
+    private static final long DEFAULT_SCAN_PERIOD_MS = 3000l;
     private static final String ALL_BEACONS_REGION = "AllBeaconsRegion";
     private FunzioniCambiaBeacon funzioniCambiaBeacon;
 
@@ -92,7 +92,7 @@ public class BeaconHelper implements BeaconConsumer, RangeNotifier {
         if (beacons.size() == 0) {
             //showToastMessage(context.getString(R.string.no_beacons_detected));
         }
-        if(funzioniCambiaBeacon != null && (beacons!=null) && beacons.size()>0) {
+        if((funzioniCambiaBeacon != null) && (beacons!=null) && (beacons.size()>0)) {
             //notifico il beacon più vicino
             String idBeacon = getMinimumDistance(beacons).getId2().toString();
             funzioniCambiaBeacon.onChangeSource(idBeacon);

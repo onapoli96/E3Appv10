@@ -37,6 +37,20 @@ public class InvioDati extends AsyncTask<String,Void,String> {
     private float density;
     private ZoomLayout zoomLayout;
     private FunzioniSelezionaNodo funzioniSelezionaNodo;
+    private int piano;
+    private AddGrafo ad = null;
+
+    public InvioDati(Context context, float density, AddGrafo ad, int piano){
+        this.ad = ad;
+        this.piano = piano;
+        this.context = context;
+        this.density = density;
+        this.grafo = new DefaultDirectedGraph<>(DefaultEdge.class);
+        nodi = new ArrayList<>();
+        archi = new ArrayList<>();
+        this.zoomLayout = null;
+        this.funzioniSelezionaNodo = null;
+    }
 
     public InvioDati(Context context, float density){
         this.context = context;
@@ -106,6 +120,9 @@ public class InvioDati extends AsyncTask<String,Void,String> {
                     zoomLayout.addView(cv);
                     zoomLayout.addView(cv1);
                 }
+            }
+            if(ad != null){
+                ad.addGrafo(piano,getGrafo());
             }
             System.out.println("SONO NELL'ONPOSTEXECUTE: "+ nodi);
         } catch (JSONException e) {

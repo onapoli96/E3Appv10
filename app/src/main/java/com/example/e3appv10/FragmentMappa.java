@@ -36,6 +36,7 @@ public class FragmentMappa extends Fragment implements FunzioniSelezionaNodo {
     private Graph<Nodo, DefaultEdge> grafo;
     private DisplayMetrics metrics;
     private float density;
+    private int piano;
 
     private View view;
     @Nullable
@@ -50,6 +51,7 @@ public class FragmentMappa extends Fragment implements FunzioniSelezionaNodo {
         zoom.setMinimumWidth(LinearLayout.LayoutParams.MATCH_PARENT);
         zoom.setMinimumHeight(LinearLayout.LayoutParams.MATCH_PARENT);
         zoom.setBackgroundResource(R.drawable.pianof);
+        piano = 4;
 
         caricaHashmap = (CaricaHashmapBeacon) new CaricaHashmapBeacon(view.getContext(), density).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaHashmap.php?piano=4");
         invio = (InvioDati) new InvioDati(view.getContext(), density, zoom, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=4");
@@ -76,6 +78,7 @@ public class FragmentMappa extends Fragment implements FunzioniSelezionaNodo {
 
     @Override
     public void onClickNodo(Nodo n) {
+        n.setPiano(piano);
         grafo = invio.getGrafo();
         ((Home) getActivity()).setDestinazione(n);
         ((Home) getActivity()).setHashMap(caricaHashmap.getHashMap());
@@ -84,6 +87,7 @@ public class FragmentMappa extends Fragment implements FunzioniSelezionaNodo {
     }
 
     public void cambiaPianoF(View v){
+        piano = 4;
         System.out.println("SONO NEL F");
         zoom.setBackgroundResource(R.drawable.pianof);
 
@@ -95,6 +99,7 @@ public class FragmentMappa extends Fragment implements FunzioniSelezionaNodo {
     }
 
     public void cambiaPianoComando(View v){
+        piano = 3;
         System.out.println("SONO NEL PONTE");
         zoom.setBackgroundResource(R.drawable.pontedicomando);
 

@@ -67,7 +67,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public class Home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class Home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AddGrafo {
     private HashMap<String,Nodo> hashMap;
     private Nodo destinazione;
     private SharedPreferences sharedPref;
@@ -76,6 +76,16 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
     private Graph<Nodo, DefaultEdge> grafo;
+
+    private InvioDati invio;
+    private CaricaHashmapBeaconaAllNodes caricaHashmap;
+    private static final String ip = "151.236.56.24";
+    private Graph<Nodo, DefaultEdge> grafo1;
+    private Graph<Nodo, DefaultEdge> grafo2;
+    private DisplayMetrics metrics;
+    private float density;
+    private HashMap<Integer,Graph> pianoGrafo;
+    private HashMap<String,Nodo> beaconsAllNodes;
 
     MqttHelper mqttHelper;
     private String gruppo, cabina;
@@ -87,6 +97,22 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        pianoGrafo = new HashMap<>();
+        metrics = getResources().getDisplayMetrics();
+        density = metrics.density;
+        invio = (InvioDati) new InvioDati(this, density, this, 3).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=3");
+        //grafo1 = invio.getGrafo();
+        invio = (InvioDati) new InvioDati(this, density, this, 4).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=4");
+        //grafo2 = invio.getGrafo();
+        /*pianoGrafo.put(3,grafo1);
+        pianoGrafo.put(4,grafo2);*/
+        caricaHashmap = (CaricaHashmapBeaconaAllNodes) new CaricaHashmapBeaconaAllNodes(this, density, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaHashmapAndroid.php");
+        //beaconsAllNodes = caricaHashmap.getHashMap();
+
+
+
+
         grafo = null;
         destinazione = null;
         hashMap = null;
@@ -281,6 +307,26 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         });
     }
 
+    public HashMap<Integer, Graph> getPianoGrafo() {
+        return pianoGrafo;
+    }
+
+    public HashMap<String, Nodo> getBeaconsAllNodes() {
+        return beaconsAllNodes;
+    }
+    @Override
+    public void addGrafo(int piano, Graph<Nodo, DefaultEdge> grafo) {
+        pianoGrafo.put(piano,grafo);
+        System.out.println("PIANO GRAFO: "+ pianoGrafo);
+    }
+
+    @Override
+    public void setAllBeaconsNodes(HashMap<String, Nodo> beaconsAllNodes) {
+        this.beaconsAllNodes = beaconsAllNodes;
+        System.out.println("BEACON NODO: "+ beaconsAllNodes);
+    }
+
+
     public Graph getGrafo(){
         return grafo;
     }
@@ -304,4 +350,6 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     public void setHashMap(HashMap<String, Nodo> hashMap) {
         this.hashMap = hashMap;
     }
+
+
 }

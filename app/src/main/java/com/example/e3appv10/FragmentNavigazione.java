@@ -61,7 +61,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.Inflater;
 
 public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeacon {
@@ -82,7 +84,6 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
     private InvioDati invio;
     private Button[] bottoniPiano;
     private CaricaHashmapBeacon caricaHashmap;
-    private Nodo destinazione;
     private EditText editX;
     private EditText editY;
     private DisplayMetrics metrics;
@@ -98,12 +99,13 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
 
     private String topic;
 
-
-
+    private Nodo destinazione;
+    private HashMap<Integer,Graph> pianoGrafo;
+    private HashMap<String,Nodo> beaconsAllNodes;
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     private static final int REQUEST_ENABLE_BLUETOOTH = 1;
-    private static final int PINO_F = R.drawable.pianof;
-    private static final int PINO_COMANDO = R.drawable.pontedicomando;
+    private static final int PIANO_F = R.drawable.pianof;
+    private static final int PIANO_COMANDO = R.drawable.pontedicomando;
     MqttHelper mqttHelper;
 
     private View view;
@@ -153,19 +155,27 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
         imageView =  (PhotoView) view.findViewById(R.id.mappa);
 
         // Per settare dinamicamente un immagine
-        imageView.setImageResource(R.drawable.pianof);
+        /*imageView.setImageResource(R.drawable.pianof);
         Drawable drawable = getResources().getDrawable(R.drawable.pianof);
-        imageView.setImageDrawable(drawable);
+        imageView.setImageDrawable(drawable);*/
+        destinazione = ((Home) getActivity()).getDestinazione();
+        if(destinazione.getPiano() == 3){
+            cambiaPiano(PIANO_COMANDO);
+        }else {
+            cambiaPiano(PIANO_F);
+        }
 
+        pianoGrafo = ((Home) getActivity()).getPianoGrafo();
+        beaconsAllNodes = ((Home) getActivity()).getBeaconsAllNodes();
         // Attach a PhotoViewAttacher, which takes care of all of the zooming functionality.
-        mAttacher = new PhotoViewAttacher(imageView);
+        //mAttacher = new PhotoViewAttacher(imageView);
 
-        ambp = (BitmapDrawable) imageView.getDrawable();
+        /*ambp = (BitmapDrawable) imageView.getDrawable();
         bitmap = Bitmap.createBitmap(1000,1000, Bitmap.Config.RGB_565);
         bitmap = ambp.getBitmap();
-
+        */
         grafo = ((Home) getActivity()).getGrafo();
-        destinazione = ((Home) getActivity()).getDestinazione();
+
         hashMap = ((Home) getActivity()).getHashMap();
 
 
@@ -182,7 +192,6 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
         gruppo = sharedPref.getString("gruppo", "--");
         cabina = sharedPref.getString("cabina", "--");
         detectBeaconInMap();
-        //cambiaPiano(PINO_COMANDO);
 
         return view;
     }
@@ -191,6 +200,11 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
         imageView.setImageResource(piano);
         Drawable drawable = getResources().getDrawable(piano);
         imageView.setImageDrawable(drawable);
+        mAttacher = new PhotoViewAttacher(imageView);
+        ambp = (BitmapDrawable) imageView.getDrawable();
+        bitmap = Bitmap.createBitmap(1000,1000, Bitmap.Config.RGB_565);
+        bitmap = ambp.getBitmap();
+        System.out.println("CAMBIA PIANO: "+piano);
     }
 
     @Override
@@ -309,28 +323,67 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
     }
 
     public void newPath(String s) {
-        if(!grafo.vertexSet().isEmpty()) {
             s = s.substring(s.length()-5);
-            DijkstraShortestPath<Nodo, DefaultEdge> dijkstraAlg = new DijkstraShortestPath<>(grafo);
-            Nodo sorgente = hashMap.get(s);
-            ShortestPathAlgorithm.SingleSourcePaths<Nodo, DefaultEdge> iPaths = dijkstraAlg.getPaths(sorgente);
-            if(!grafo.containsVertex(destinazione)){
-                showToastMessage("Devi prima inserire una destinazione valida");
+            Nodo sorgente = beaconsAllNodes.get(s);
+            if(sorgente == null){
                 return;
             }
-            List<Nodo> path = iPaths.getPath(destinazione).getVertexList();
-            ArrayList<Nodo> result = new ArrayList<>(path);
-
-            if (result != null) {
-                drawMinPath(result);
-
-            } else {
-                Toast.makeText(getView().getContext(), "Cammino non trovato!!", Toast.LENGTH_SHORT).show();
+            Nodo uscitaPiano = null;
+            if(sorgente.getPiano() == 3){
+                cambiaPiano(PIANO_COMANDO);
+                System.out.println("COMANDO");
+            }else {
+                cambiaPiano(PIANO_F);
             }
-        }
-        else{
-            Toast.makeText(getView().getContext(), "Carica prima il grafo!", Toast.LENGTH_SHORT).show();
-        }
+            grafo = pianoGrafo.get(sorgente.getPiano());
+            Iterator it = beaconsAllNodes.entrySet().iterator();
+            int direzione;
+            if(sorgente.getPiano() == destinazione.getPiano() ) {
+                DijkstraShortestPath<Nodo, DefaultEdge> dijkstraAlg = new DijkstraShortestPath<>(grafo);
+
+                ShortestPathAlgorithm.SingleSourcePaths<Nodo, DefaultEdge> iPaths = dijkstraAlg.getPaths(sorgente);
+                List<Nodo> path = iPaths.getPath(destinazione).getVertexList();
+                ArrayList<Nodo> result = new ArrayList<>(path);
+
+                if (result != null) {
+                    drawMinPath(result);
+
+                } else {
+                    Toast.makeText(getView().getContext(), "Cammino non trovato!!", Toast.LENGTH_SHORT).show();
+                }
+            }else{
+
+                //in caso si deve salire e dunque il piano sorgente è minore di quello di destinazione cerco le scale che salgono
+                // altrimrnti scengo quelle che scendono
+                if(sorgente.getPiano() < destinazione.getPiano()){
+                    direzione = 1;
+                }
+                else{
+                    direzione = 2;
+                }
+                while (it.hasNext()) {
+                    // Utilizza il nuovo elemento (coppia chiave-valore)
+                    // dell'hashmap
+
+                    Map.Entry entry = (Map.Entry)it.next();
+                    Nodo n = (Nodo) entry.getValue();
+                    if((n.getPiano() == sorgente.getPiano()) && ((n.getScala() == 3) || (n.getScala() == direzione))){
+                        uscitaPiano = n;
+                        break;
+                    }
+                }
+                DijkstraShortestPath<Nodo, DefaultEdge> dijkstraAlg = new DijkstraShortestPath<>(grafo);
+                ShortestPathAlgorithm.SingleSourcePaths<Nodo, DefaultEdge> iPaths = dijkstraAlg.getPaths(sorgente);
+                List<Nodo> path = iPaths.getPath(uscitaPiano).getVertexList();
+                ArrayList<Nodo> result = new ArrayList<>(path);
+
+                if (result != null) {
+                    drawMinPath(result);
+
+                } else {
+                    Toast.makeText(getView().getContext(), "Cammino non trovato!!", Toast.LENGTH_SHORT).show();
+                }
+            }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -375,6 +428,7 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
 
     @Override
     public void onChangeSource(String idBeacon) {
+
         long tempo = Instant.now().getEpochSecond();
         inviaMessaggio("pos",nome.toUpperCase()+" "+ cognome.toUpperCase()+" "+ idBeacon+" "+ tempo );
         newPath(idBeacon);

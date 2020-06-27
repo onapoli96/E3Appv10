@@ -7,6 +7,7 @@ public class Nodo {
     private int x;
     private int y;
     private int piano;
+    private int scala;
 
     @Override
     public int hashCode() {
@@ -16,6 +17,13 @@ public class Nodo {
     public Nodo(int x, int y){
         this.x = x;
         this.y = y;
+    }
+
+    public Nodo(int x, int y, int piano, int scala){
+        this.scala = scala;
+        this.x = x;
+        this.y = y;
+        this.piano = piano;
     }
 
     public Nodo(int x, int y, int piano){
@@ -50,6 +58,13 @@ public class Nodo {
         }
     }
 
+    public int getScala() {
+        return scala;
+    }
+
+    public void setScala(int scala) {
+        this.scala = scala;
+    }
 
     public int getPiano() {
         return piano;
