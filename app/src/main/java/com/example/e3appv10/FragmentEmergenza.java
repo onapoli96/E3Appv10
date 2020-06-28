@@ -1,7 +1,13 @@
 package com.example.e3appv10;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -11,11 +17,16 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,16 +56,28 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.e3appv10.giorgio.Helper.BeaconHelper;
+import com.example.e3appv10.giorgio.Helper.MqttHelper;
 import com.example.e3appv10.giorgio.Helper.Nodo;
 import com.example.e3appv10.giorgio.customs.CustomViewEdge;
 
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.jgrapht.Graph;
+import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
+import org.jgrapht.graph.DefaultEdge;
+
+import java.time.Instant;
 import java.util.ArrayList;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class FragmentEmergenza extends Fragment  implements View.OnClickListener,FunzioniCambiaBeacon{
+public class FragmentEmergenza extends Fragment  implements FunzioniCambiaBeacon{
 
     private BeaconHelper beaconHelper;
     private View view;
@@ -79,18 +102,40 @@ public class FragmentEmergenza extends Fragment  implements View.OnClickListener
     private float pivotY;
     private int lastX, lastY;
 
+    private MqttHelper mqttHelper;
+    private Nodo destinazione;
+    private HashMap<Integer, Graph> pianoGrafo;
+    private HashMap<String,Nodo> beaconsAllNodes;
+    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
+    private static final int REQUEST_ENABLE_BLUETOOTH = 1;
+    private SharedPreferences sharedPref;
+    private Graph<Nodo, DefaultEdge> grafo;
+    private float lastAngolo = 0;
+
+    private String nome;
+    private String cognome;
+    private String gruppo;
+    private String cabina;
+    private int codice;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //beaconHelper = new BeaconHelper(view.getContext(), this);
         //beaconHelper.startDetectingBeacons();
-
-
-
-
         view = inflater.inflate(R.layout.fragment_emergenza_layout, container, false);
-        Button b = (Button) view.findViewById(R.id.cambiaArco);
-        b.setOnClickListener(this);
+        beaconHelper = new BeaconHelper(view.getContext(), this);
+        //mqttHelper = new MqttHelper(view.getContext().getApplicationContext(),topic);
+        pianoGrafo = ((Home) getActivity()).getPianoGrafo();
+        beaconsAllNodes = ((Home) getActivity()).getBeaconsAllNodes();
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(view.getContext());
+        codice = sharedPref.getInt("codice", 0);
+        nome = sharedPref.getString("nome", "user");
+        cognome = sharedPref.getString("cognome", "user");
+        gruppo = sharedPref.getString("gruppo", "--");
+        cabina = sharedPref.getString("cabina", "--");
+
+
         layout = view.findViewById(R.id.contenitore);
 
         rotazioneAttuale = 0;
@@ -109,7 +154,6 @@ public class FragmentEmergenza extends Fragment  implements View.OnClickListener
         //freccia.setImageResource(R.drawable.freccia);
         matrix = new Matrix();
         archi = new ArrayList<>();
-        gradi = new ArrayList<>();
         sensorManager = (SensorManager) view.getContext().getSystemService(Context.SENSOR_SERVICE);
         giroscopio = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE_UNCALIBRATED);
 
@@ -122,36 +166,8 @@ public class FragmentEmergenza extends Fragment  implements View.OnClickListener
         canvas = new Canvas(operations);
         canvas.drawBitmap(bitmap,0,0,null);
 
-        CustomViewEdge cve = new CustomViewEdge(view.getContext(), new Nodo(20,50), new Nodo(20,20));
-        CustomViewEdge cve1 = new CustomViewEdge(view.getContext(), new Nodo(20,20), new Nodo(40,10));
-        CustomViewEdge cve2 = new CustomViewEdge(view.getContext(), new Nodo(40,10), new Nodo(60,10));
-        CustomViewEdge cve3 = new CustomViewEdge(view.getContext(), new Nodo(60,10), new Nodo(50,60));
-        CustomViewEdge cve4 = new CustomViewEdge(view.getContext(), new Nodo(50,60), new Nodo(35,40));
-        CustomViewEdge cve5 = new CustomViewEdge(view.getContext(), new Nodo(35,40), new Nodo(30,45));
-        CustomViewEdge cve6 = new CustomViewEdge(view.getContext(), new Nodo(30,45), new Nodo(40,60));
-        CustomViewEdge cve7 = new CustomViewEdge(view.getContext(), new Nodo( 40,60), new Nodo(20,50));
-
-        archi.add(cve);
-        archi.add(cve1);
-        archi.add(cve2);
-        archi.add(cve3);
-        archi.add(cve4);
-        archi.add(cve5);
-        archi.add(cve6);
-        archi.add(cve7);
-
-        invertiCoordinate();
-        System.out.println(archi); //Qui controlliamo che siano invertiti bene e lo sono
         lastX = 0;
         lastY = 0;
-
-        gradi.add((float) 27.82034063065508);
-        gradi.add((float)63.43494882292202);
-        gradi.add((float)348.6900675259798);
-        gradi.add((float)309.559667968994496);
-        gradi.add((float)225.0);
-        gradi.add((float)135.0);
-        gradi.add((float)348.96375653207353);
 
         contatore = 0 ;
         rangeGreen = 5;
@@ -195,7 +211,54 @@ public class FragmentEmergenza extends Fragment  implements View.OnClickListener
 
             }
         };
+        detectBeaconInMap();
     return view;
+    }
+
+    public void newPath(String s) {
+        s = s.substring(s.length()-5);
+        Nodo sorgente = beaconsAllNodes.get(s);
+        if(sorgente == null){
+            return;
+        }
+        //Nodo sorgente = new Nodo(beaconsAllNodes.get(s).getX(), beaconsAllNodes.get(s).getY(), beaconsAllNodes.get(s).getPiano());
+
+        Nodo uscitaPiano = null;
+
+        grafo = pianoGrafo.get(sorgente.getPiano());
+        Iterator it = beaconsAllNodes.entrySet().iterator();
+
+        while (it.hasNext()) {
+            Map.Entry entry = (Map.Entry)it.next();
+            Nodo n = (Nodo) entry.getValue();
+            if((n.getPiano() == sorgente.getPiano()) && ((n.getScala() == 3) || (n.getScala() == 1) || (n.getScala() == 2))){
+                //uscitaPiano = new Nodo(n.getX(), n.getY(), n.getPiano());
+                uscitaPiano = n;
+                break;
+            }
+        }
+        DijkstraShortestPath<Nodo, DefaultEdge> dijkstraAlg = new DijkstraShortestPath<>(grafo);
+
+        ShortestPathAlgorithm.SingleSourcePaths<Nodo, DefaultEdge> iPaths = dijkstraAlg.getPaths(sorgente);
+        List<Nodo> path = iPaths.getPath(uscitaPiano).getVertexList();
+        ArrayList<Nodo> result = new ArrayList<>(path);
+        if (result != null) {
+            if(result.size() >= 2){
+                Nodo n1 = new Nodo( result.get(0).getX(), result.get(0).getY());
+                Nodo n2 = new Nodo( result.get(1).getX(), result.get(1).getY());
+                CustomViewEdge cve = new CustomViewEdge(view.getContext(), n1, n2);
+                archi.add(cve);
+                invertiCoordinate();
+                cambiaArco();
+            }else {
+                Toast.makeText(getView().getContext(), "Sei arrivato !!!", Toast.LENGTH_SHORT).show();
+            }
+
+        } else {
+            Toast.makeText(getView().getContext(), "Cammino non trovato!!", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
     @Override
@@ -203,30 +266,27 @@ public class FragmentEmergenza extends Fragment  implements View.OnClickListener
 
     }
 
-    @Override
-    public void onClick(View v) {
-        cambiaArco(v);
+
+    public void cambiaArco(){
+
+
+        //Sistema bussola
+        float angoloDiRotazione = getRotation(archi.get(0));
+        angoloDiRotazione -= lastAngolo;
+
+        //Rotazione adattata al sistema della bussola non a quello CARTESIANO
+        //matrix.setRotate(gradi.get(contatore) ,pivotX,pivotY);
+
+        matrix.setRotate(angoloDiRotazione ,pivotX,pivotY);
+
+        System.out.println(angoloDiRotazione);
+        rotazioneAttuale = angoloDiRotazione;
+
+        contatore++;
+        contatore = contatore % archi.size();
+        lastAngolo =  getRotation(archi.get(0));
+
     }
-
-    public void cambiaArco(View v){
-
-
-            //Sistema bussola
-            float angoloDiRotazione = getRotation(archi.get(contatore));
-            if (contatore>1){
-                angoloDiRotazione -=  getRotation(archi.get(contatore-1));
-            }
-            //Rotazione adattata al sistema della bussola non a quello CARTESIANO
-            //matrix.setRotate(gradi.get(contatore) ,pivotX,pivotY);
-
-            matrix.setRotate(angoloDiRotazione ,pivotX,pivotY);
-
-            System.out.println(angoloDiRotazione);
-            rotazioneAttuale = angoloDiRotazione;
-
-            contatore++;
-            contatore = contatore % archi.size();
-        }
 
 
 
@@ -261,8 +321,6 @@ public class FragmentEmergenza extends Fragment  implements View.OnClickListener
                     maxY = archi.get(i).getY2();
                 }
             }
-
-            System.out.println("Il minimo è "+ minY +" Il massimo è " +maxY);
 
             for(int i = 0 ; i < archi.size(); i++){
                 archi.get(i).setY1(maxY - archi.get(i).getY1() + minY );
@@ -312,14 +370,90 @@ public class FragmentEmergenza extends Fragment  implements View.OnClickListener
             return (float) angolo;
         }
 
-    @Override
-    public void onChangeSource(String idBeacon) {
-
-    }
 
     @Override
     public void infoBeaconsResived(String infoBeacon) {
         System.out.println(infoBeacon);
+    }
+
+    private boolean askForBluetooth(){
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        if (mBluetoothAdapter == null) {
+            showToastMessage(getString(R.string.not_support_bluetooth_msg));
+            return false;
+        }
+        else if (!mBluetoothAdapter.isEnabled()){
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BLUETOOTH);
+        }
+        if(mBluetoothAdapter.isEnabled()){
+            return true;
+        }
+        return false;
+    }
+
+
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void askForLocationPermissions() {
+        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                PERMISSION_REQUEST_COARSE_LOCATION);
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_COARSE_LOCATION: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(getView().getContext());
+                    builder.setTitle(R.string.funcionality_limited);
+                    builder.setMessage(getString(R.string.location_not_granted));
+                    builder.setPositiveButton(android.R.string.ok, null);
+                    builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+
+                        }
+                    });
+                    builder.show();
+                    askForLocationPermissions();
+                }
+                return;
+            }
+        }
+    }
+
+
+    private void showToastMessage (String message) {
+        Toast toast = Toast.makeText(getView().getContext(), message, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
+    public void detectBeaconInMap(){
+        askForBluetooth();
+        beaconHelper.startDetectingBeacons();
+
+    }
+    private void inviaMessaggio(String topic, String messaggio){
+        MqttMessage message = new MqttMessage(messaggio.getBytes());
+        try {
+            mqttHelper.publica(topic, message);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onChangeSource(String idBeacon) {
+
+        long tempo = Instant.now().getEpochSecond();
+        //inviaMessaggio("pos",nome.toUpperCase()+" "+ cognome.toUpperCase()+" "+ idBeacon+" "+ tempo );
+        newPath(idBeacon);
     }
 }
 

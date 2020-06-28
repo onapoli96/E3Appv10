@@ -9,11 +9,6 @@ public class Nodo {
     private int piano;
     private int scala;
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(x, y);
-    }
-
     public Nodo(int x, int y){
         this.x = x;
         this.y = y;
@@ -56,6 +51,11 @@ public class Nodo {
         {
             return false;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 
     public int getScala() {

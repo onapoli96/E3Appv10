@@ -56,24 +56,25 @@ public class CaricaHashmapBeaconaAllNodes extends AsyncTask<String,Void,String> 
     protected void onPostExecute(String result) {
 
         try {
-
             JSONArray array = new JSONArray(result);
             for(int i = 0; i < array.length(); i++) {
-                JSONObject object = array.getJSONObject(i);
-                String idBeacon = object.get("IDBeacon").toString();
-                int x = Integer.parseInt(object.get("X").toString());
-                int y = Integer.parseInt(object.get("Y").toString());
-                int piano = Integer.parseInt(object.get("Piano").toString());
-                int scala = Integer.parseInt(object.get("Scala").toString());
-                Nodo n = new Nodo(x, y, piano, scala);
-                beaconNodo.put(idBeacon, n);
-                System.out.println("sono qui"+ x+" "+ y + " "+ idBeacon);
+
+                    JSONObject object = array.getJSONObject(i);
+                    String idBeacon = object.get("IDBeacon").toString();
+                    int x = Integer.parseInt(object.get("X").toString());
+                    int y = Integer.parseInt(object.get("Y").toString());
+                    int piano = Integer.parseInt(object.get("Piano").toString());
+                    int scala = Integer.parseInt(object.get("Scala").toString());
+                    Nodo n = new Nodo(x, y, piano, scala);
+                    beaconNodo.put(idBeacon, n);
+
             }
             ad.setAllBeaconsNodes(beaconNodo);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

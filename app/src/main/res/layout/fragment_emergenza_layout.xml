@@ -11,13 +11,7 @@
         android:layout_height="wrap_content"
         android:padding="1dp"
         android:layout_centerInParent="true" />
-    <Button
-        android:id="@+id/cambiaArco"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Passa all'arco successivo"
-        android:layout_below="@+id/freccia"
-        android:layout_centerHorizontal="true" />
+
 
 
 
