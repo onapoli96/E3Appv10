@@ -47,9 +47,11 @@ public class CustomViewEdge extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         int x1 = (int)((n1.getX() - 8 )* density);
-        int y1 = (int)((n1.getY() - 64)* density);
+        int y1 = (int)((n1.getY()-150)* density/1.5);
+        //int y1 = (int)((n1.getY() - 64)* density);
         int x2 = (int)((n2.getX() - 8)* density);
-        int y2 = (int)((n2.getY() - 64)* density);
+        //int y2 = (int)((n2.getY() - 64)* density);
+        int y2 = (int)((n2.getY()-150)* density/1.5);
         canvas.drawLine(x1, y1, x2, y2,paint);
 
     }

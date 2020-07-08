@@ -21,7 +21,7 @@
             android:layout_margin="10dp"
             android:layout_weight="1"
             android:background="@android:color/holo_green_light"
-            android:text="Piano F"
+            android:text="Piano A"
             android:textColor="@android:color/white"
             />
 
@@ -35,7 +35,7 @@
             android:alpha="0.5"
             android:background="@android:color/holo_red_light"
             android:enabled="true"
-            android:text="Piano Comando"
+            android:text="Piano B"
             android:textColor="@android:color/white"
             />
     </LinearLayout>

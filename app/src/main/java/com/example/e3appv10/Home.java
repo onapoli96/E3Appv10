@@ -101,9 +101,9 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         pianoGrafo = new HashMap<>();
         metrics = getResources().getDisplayMetrics();
         density = metrics.density;
-        invio = (InvioDati) new InvioDati(this, density, this, 3).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=3");
+        invio = (InvioDati) new InvioDati(this, density, this, 2).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=2");
         //grafo1 = invio.getGrafo();
-        invio = (InvioDati) new InvioDati(this, density, this, 4).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=4");
+        invio = (InvioDati) new InvioDati(this, density, this, 1).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=1");
         //grafo2 = invio.getGrafo();
         /*pianoGrafo.put(3,grafo1);
         pianoGrafo.put(4,grafo2);*/

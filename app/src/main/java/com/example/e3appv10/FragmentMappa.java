@@ -1,12 +1,8 @@
 package com.example.e3appv10;
 
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.AsyncTask;
 import android.util.DisplayMetrics;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.os.Bundle;
@@ -50,11 +46,12 @@ public class FragmentMappa extends Fragment implements FunzioniSelezionaNodo {
         zoom = new ZoomLayout(getContext());
         zoom.setMinimumWidth(LinearLayout.LayoutParams.MATCH_PARENT);
         zoom.setMinimumHeight(LinearLayout.LayoutParams.MATCH_PARENT);
-        zoom.setBackgroundResource(R.drawable.pianof);
-        piano = 4;
+        //zoom.setBackgroundResource(R.drawable.pianof);
+        zoom.setBackgroundResource(R.drawable.pianoa);
+        piano = 1;
 
-        caricaHashmap = (CaricaHashmapBeacon) new CaricaHashmapBeacon(view.getContext(), density).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaHashmap.php?piano=4");
-        invio = (InvioDati) new InvioDati(view.getContext(), density, zoom, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=4");
+        caricaHashmap = (CaricaHashmapBeacon) new CaricaHashmapBeacon(view.getContext(), density).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaHashmap.php?piano=1");
+        invio = (InvioDati) new InvioDati(view.getContext(), density, zoom, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=1");
 
         container.addView(zoom);
 
@@ -87,24 +84,24 @@ public class FragmentMappa extends Fragment implements FunzioniSelezionaNodo {
     }
 
     public void cambiaPianoF(View v){
-        piano = 4;
-        System.out.println("SONO NEL F");
-        zoom.setBackgroundResource(R.drawable.pianof);
+        piano = 1;
+        System.out.println("SONO NEL PIANO A");
+        zoom.setBackgroundResource(R.drawable.pianoa);
 
-        caricaHashmap = (CaricaHashmapBeacon) new CaricaHashmapBeacon(view.getContext(), density).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaHashmap.php?piano=4");
-        invio = (InvioDati) new InvioDati(view.getContext(), density, zoom, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=4");
+        caricaHashmap = (CaricaHashmapBeacon) new CaricaHashmapBeacon(view.getContext(), density).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaHashmap.php?piano=1");
+        invio = (InvioDati) new InvioDati(view.getContext(), density, zoom, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=1");
         container.removeAllViews();
         zoom.removeAllViews();
         container.addView(zoom);
     }
 
     public void cambiaPianoComando(View v){
-        piano = 3;
-        System.out.println("SONO NEL PONTE");
-        zoom.setBackgroundResource(R.drawable.pontedicomando);
+        piano = 2;
+        System.out.println("SONO NEL PIANO B");
+        zoom.setBackgroundResource(R.drawable.pianob);
 
-        caricaHashmap = (CaricaHashmapBeacon) new CaricaHashmapBeacon(view.getContext(), density).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaHashmap.php?piano=3");
-        invio = (InvioDati) new InvioDati(view.getContext(), density, zoom, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=3");
+        caricaHashmap = (CaricaHashmapBeacon) new CaricaHashmapBeacon(view.getContext(), density).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaHashmap.php?piano=2");
+        invio = (InvioDati) new InvioDati(view.getContext(), density, zoom, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"http://"+ip+"/interfaccia_capitano/php/caricaGrafo.php?piano=2");
         container.removeAllViews();
         zoom.removeAllViews();
         container.addView(zoom);

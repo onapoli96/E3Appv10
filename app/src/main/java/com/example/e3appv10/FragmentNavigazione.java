@@ -11,8 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.VectorDrawable;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -21,10 +19,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,9 +29,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.e3appv10.CaricaHashmapBeacon;
-import com.example.e3appv10.InvioDati;
-import com.example.e3appv10.R;
 import com.example.e3appv10.giorgio.Helper.BeaconHelper;
 import com.example.e3appv10.giorgio.Helper.MqttHelper;
 import com.example.e3appv10.giorgio.Helper.Nodo;
@@ -44,10 +36,7 @@ import com.example.e3appv10.giorgio.customs.CustomView;
 import com.example.e3appv10.giorgio.customs.CustomViewEdge;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.github.chrisbanes.photoview.PhotoViewAttacher;
-import com.google.gson.Gson;
 
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.jgrapht.Graph;
@@ -55,16 +44,12 @@ import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultEdge;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.Inflater;
 
 public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeacon {
 
@@ -104,8 +89,10 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
     private HashMap<String,Nodo> beaconsAllNodes;
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     private static final int REQUEST_ENABLE_BLUETOOTH = 1;
-    private static final int PIANO_F = R.drawable.pianof;
-    private static final int PIANO_COMANDO = R.drawable.pontedicomando;
+   /* private static final int PIANO_F = R.drawable.pianoa;
+    private static final int PIANO_COMANDO = R.drawable.pianob;*/
+    private static final int PIANO_A = R.drawable.pianoa;
+    private static final int PIANO_B = R.drawable.pianob;
     MqttHelper mqttHelper;
 
     private View view;
@@ -159,10 +146,10 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
         Drawable drawable = getResources().getDrawable(R.drawable.pianof);
         imageView.setImageDrawable(drawable);*/
         destinazione = ((Home) getActivity()).getDestinazione();
-        if(destinazione.getPiano() == 3){
-            cambiaPiano(PIANO_COMANDO);
+        if(destinazione.getPiano() == 2){
+            cambiaPiano(PIANO_B);
         }else {
-            cambiaPiano(PIANO_F);
+            cambiaPiano(PIANO_A);
         }
 
         pianoGrafo = ((Home) getActivity()).getPianoGrafo();
@@ -329,11 +316,11 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
                 return;
             }
             Nodo uscitaPiano = null;
-            if(sorgente.getPiano() == 3){
-                cambiaPiano(PIANO_COMANDO);
+            if(sorgente.getPiano() == 2){
+                cambiaPiano(PIANO_B);
                 System.out.println("COMANDO");
             }else {
-                cambiaPiano(PIANO_F);
+                cambiaPiano(PIANO_A);
             }
             grafo = pianoGrafo.get(sorgente.getPiano());
             Iterator it = beaconsAllNodes.entrySet().iterator();
