@@ -322,53 +322,56 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
             }else {
                 cambiaPiano(PIANO_A);
             }
+            pianoGrafo = ((Home) getActivity()).getPianoGrafo();
             grafo = pianoGrafo.get(sorgente.getPiano());
-            Iterator it = beaconsAllNodes.entrySet().iterator();
-            int direzione;
-            if(sorgente.getPiano() == destinazione.getPiano() ) {
-                DijkstraShortestPath<Nodo, DefaultEdge> dijkstraAlg = new DijkstraShortestPath<>(grafo);
+            if(grafo != null){
+                Iterator it = beaconsAllNodes.entrySet().iterator();
+                int direzione;
+                if(sorgente.getPiano() == destinazione.getPiano() ) {
+                    DijkstraShortestPath<Nodo, DefaultEdge> dijkstraAlg = new DijkstraShortestPath<>(grafo);
 
-                ShortestPathAlgorithm.SingleSourcePaths<Nodo, DefaultEdge> iPaths = dijkstraAlg.getPaths(sorgente);
-                List<Nodo> path = iPaths.getPath(destinazione).getVertexList();
-                ArrayList<Nodo> result = new ArrayList<>(path);
+                    ShortestPathAlgorithm.SingleSourcePaths<Nodo, DefaultEdge> iPaths = dijkstraAlg.getPaths(sorgente);
+                    List<Nodo> path = iPaths.getPath(destinazione).getVertexList();
+                    ArrayList<Nodo> result = new ArrayList<>(path);
 
-                if (result != null) {
-                    drawMinPath(result);
+                    if (result != null) {
+                        drawMinPath(result);
 
-                } else {
-                    Toast.makeText(getView().getContext(), "Cammino non trovato!!", Toast.LENGTH_SHORT).show();
-                }
-            }else{
-
-                //in caso si deve salire e dunque il piano sorgente è minore di quello di destinazione cerco le scale che salgono
-                // altrimrnti scengo quelle che scendono
-                if(sorgente.getPiano() < destinazione.getPiano()){
-                    direzione = 1;
-                }
-                else{
-                    direzione = 2;
-                }
-                while (it.hasNext()) {
-                    // Utilizza il nuovo elemento (coppia chiave-valore)
-                    // dell'hashmap
-
-                    Map.Entry entry = (Map.Entry)it.next();
-                    Nodo n = (Nodo) entry.getValue();
-                    if((n.getPiano() == sorgente.getPiano()) && ((n.getScala() == 3) || (n.getScala() == direzione))){
-                        uscitaPiano = n;
-                        break;
+                    } else {
+                        Toast.makeText(getView().getContext(), "Cammino non trovato!!", Toast.LENGTH_SHORT).show();
                     }
-                }
-                DijkstraShortestPath<Nodo, DefaultEdge> dijkstraAlg = new DijkstraShortestPath<>(grafo);
-                ShortestPathAlgorithm.SingleSourcePaths<Nodo, DefaultEdge> iPaths = dijkstraAlg.getPaths(sorgente);
-                List<Nodo> path = iPaths.getPath(uscitaPiano).getVertexList();
-                ArrayList<Nodo> result = new ArrayList<>(path);
+                }else{
 
-                if (result != null) {
-                    drawMinPath(result);
+                    //in caso si deve salire e dunque il piano sorgente è minore di quello di destinazione cerco le scale che salgono
+                    // altrimrnti scengo quelle che scendono
+                    if(sorgente.getPiano() < destinazione.getPiano()){
+                        direzione = 1;
+                    }
+                    else{
+                        direzione = 2;
+                    }
+                    while (it.hasNext()) {
+                        // Utilizza il nuovo elemento (coppia chiave-valore)
+                        // dell'hashmap
 
-                } else {
-                    Toast.makeText(getView().getContext(), "Cammino non trovato!!", Toast.LENGTH_SHORT).show();
+                        Map.Entry entry = (Map.Entry)it.next();
+                        Nodo n = (Nodo) entry.getValue();
+                        if((n.getPiano() == sorgente.getPiano()) && ((n.getScala() == 3) || (n.getScala() == direzione))){
+                            uscitaPiano = n;
+                            break;
+                        }
+                    }
+                    DijkstraShortestPath<Nodo, DefaultEdge> dijkstraAlg = new DijkstraShortestPath<>(grafo);
+                    ShortestPathAlgorithm.SingleSourcePaths<Nodo, DefaultEdge> iPaths = dijkstraAlg.getPaths(sorgente);
+                    List<Nodo> path = iPaths.getPath(uscitaPiano).getVertexList();
+                    ArrayList<Nodo> result = new ArrayList<>(path);
+
+                    if (result != null) {
+                        drawMinPath(result);
+
+                    } else {
+                        Toast.makeText(getView().getContext(), "Cammino non trovato!!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
     }

@@ -224,41 +224,42 @@ public class FragmentEmergenza extends Fragment  implements FunzioniCambiaBeacon
         //Nodo sorgente = new Nodo(beaconsAllNodes.get(s).getX(), beaconsAllNodes.get(s).getY(), beaconsAllNodes.get(s).getPiano());
 
         Nodo uscitaPiano = null;
-
+        pianoGrafo = ((Home) getActivity()).getPianoGrafo();
         grafo = pianoGrafo.get(sorgente.getPiano());
-        Iterator it = beaconsAllNodes.entrySet().iterator();
+        if(grafo != null){
+            Iterator it = beaconsAllNodes.entrySet().iterator();
 
-        while (it.hasNext()) {
-            Map.Entry entry = (Map.Entry)it.next();
-            Nodo n = (Nodo) entry.getValue();
-            if((n.getPiano() == sorgente.getPiano()) && ((n.getScala() == 3) || (n.getScala() == 1) || (n.getScala() == 2))){
-                //uscitaPiano = new Nodo(n.getX(), n.getY(), n.getPiano());
-                uscitaPiano = n;
-                break;
+            while (it.hasNext()) {
+                Map.Entry entry = (Map.Entry)it.next();
+                Nodo n = (Nodo) entry.getValue();
+                if((n.getPiano() == sorgente.getPiano()) && ((n.getScala() == 3) || (n.getScala() == 1) || (n.getScala() == 2))){
+                    //uscitaPiano = new Nodo(n.getX(), n.getY(), n.getPiano());
+                    uscitaPiano = n;
+                    break;
+                }
             }
-        }
-        DijkstraShortestPath<Nodo, DefaultEdge> dijkstraAlg = new DijkstraShortestPath<>(grafo);
+            DijkstraShortestPath<Nodo, DefaultEdge> dijkstraAlg = new DijkstraShortestPath<>(grafo);
 
-        ShortestPathAlgorithm.SingleSourcePaths<Nodo, DefaultEdge> iPaths = dijkstraAlg.getPaths(sorgente);
-        List<Nodo> path = iPaths.getPath(uscitaPiano).getVertexList();
-        ArrayList<Nodo> result = new ArrayList<>(path);
-        if (result != null) {
-            if(result.size() >= 2){
-                Nodo n1 = new Nodo( result.get(0).getX(), result.get(0).getY());
-                Nodo n2 = new Nodo( result.get(1).getX(), result.get(1).getY());
-                CustomViewEdge cve = new CustomViewEdge(view.getContext(), n1, n2);
-                archi.add(cve);
-                invertiCoordinate();
-                cambiaArco();
-            }else {
-                Toast.makeText(getView().getContext(), "Sei arrivato !!!", Toast.LENGTH_SHORT).show();
+            ShortestPathAlgorithm.SingleSourcePaths<Nodo, DefaultEdge> iPaths = dijkstraAlg.getPaths(sorgente);
+            List<Nodo> path = iPaths.getPath(uscitaPiano).getVertexList();
+            ArrayList<Nodo> result = new ArrayList<>(path);
+            if (result != null) {
+                if(result.size() >= 2){
+                    Nodo n1 = new Nodo( result.get(0).getX(), result.get(0).getY());
+                    Nodo n2 = new Nodo( result.get(1).getX(), result.get(1).getY());
+                    CustomViewEdge cve = new CustomViewEdge(view.getContext(), n1, n2);
+                    archi.add(cve);
+                    invertiCoordinate();
+                    cambiaArco();
+                }else {
+                    Toast.makeText(getView().getContext(), "Sei arrivato !!!", Toast.LENGTH_SHORT).show();
+                }
+
+            } else {
+                Toast.makeText(getView().getContext(), "Cammino non trovato!!", Toast.LENGTH_SHORT).show();
             }
 
-        } else {
-            Toast.makeText(getView().getContext(), "Cammino non trovato!!", Toast.LENGTH_SHORT).show();
         }
-
-
     }
 
     @Override
