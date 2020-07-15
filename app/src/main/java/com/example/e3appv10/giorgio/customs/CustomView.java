@@ -27,9 +27,11 @@ public class CustomView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        int x = (int)((nodo.getX() - 8 )* density);
+        //int x = (int)((nodo.getX() - 8 )* density);
         //int y = (int)((nodo.getY() - 64)* density);
-        int y = (int)((nodo.getY()-150)* density/1.5);
+        //int y = (int)((nodo.getY()-150)* density/1.5);
+        int x = (int)((nodo.getX() - 8 )* density/1.5);
+        int y = (int)((nodo.getY()-68)* density);
         canvas.drawCircle(x, y, 20, esterno);
         canvas.drawCircle(x, y, 15, interno);
         Paint paint = new Paint();
