@@ -53,9 +53,9 @@ public class CustomViewEdge extends View {
         //int y2 = (int)((n2.getY() - 64)* density);
         int y2 = (int)((n2.getY()-150)* density/1.5);*/
         int x1 = (int)((n1.getX() )* density);
-        int y1 = (int)((n1.getY() )* density);
+        int y1 = (int)((n1.getY() -68)* density);
         int x2 = (int)((n2.getX() )* density);
-        int y2 = (int)((n2.getY() )* density);
+        int y2 = (int)((n2.getY() -68)* density);
         canvas.drawLine(x1, y1, x2, y2,paint);
 
 

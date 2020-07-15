@@ -31,7 +31,7 @@ public class CustomView extends View {
         //int y = (int)((nodo.getY() - 64)* density);
         //int y = (int)((nodo.getY()-150)* density/1.5);
         int x = (int)((nodo.getX())* density);
-        int y = (int)((nodo.getY())* density);
+        int y = (int)((nodo.getY()-68)* density);
         canvas.drawCircle(x, y, 20, esterno);
         canvas.drawCircle(x, y, 15, interno);
         Paint paint = new Paint();
