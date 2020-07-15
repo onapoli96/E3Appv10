@@ -323,6 +323,9 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
                 cambiaPiano(PIANO_A);
             }
             pianoGrafo = ((Home) getActivity()).getPianoGrafo();
+            if(pianoGrafo == null){
+                return;
+            }
             grafo = pianoGrafo.get(sorgente.getPiano());
             if(grafo != null){
                 Iterator it = beaconsAllNodes.entrySet().iterator();

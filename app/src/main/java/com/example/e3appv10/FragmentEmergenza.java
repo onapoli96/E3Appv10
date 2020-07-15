@@ -225,6 +225,9 @@ public class FragmentEmergenza extends Fragment  implements FunzioniCambiaBeacon
 
         Nodo uscitaPiano = null;
         pianoGrafo = ((Home) getActivity()).getPianoGrafo();
+        if(pianoGrafo == null){
+            return;
+        }
         grafo = pianoGrafo.get(sorgente.getPiano());
         if(grafo != null){
             Iterator it = beaconsAllNodes.entrySet().iterator();
