@@ -87,9 +87,9 @@ public class CustomViewMappa extends View implements View.OnClickListener {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        int x = (int)((nodo.getX() - 8 )* density/1.5);
+        int x = (int)((nodo.getX())* density);
         //int y = (int)((nodo.getY()-68)* density);
-        int y = (int)((nodo.getY()-150)* density/1.5);
+        int y = (int)((nodo.getY()- 68)* density);
         setX((float)x);
         setY((float)y);
         Log.d("DEBUG","onDraw, canvas.h="+canvas.getHeight()+"  w="+canvas.getWidth() + "x= " + getX() + "y= " + getY()+ "nodoX= "+ x + "nodoY= "+ y);
