@@ -118,6 +118,8 @@ public class FragmentEmergenza extends Fragment  implements FunzioniCambiaBeacon
     private String cabina;
     private int codice;
 
+    private String lastIdBeacon;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -134,6 +136,8 @@ public class FragmentEmergenza extends Fragment  implements FunzioniCambiaBeacon
         cognome = sharedPref.getString("cognome", "user");
         gruppo = sharedPref.getString("gruppo", "--");
         cabina = sharedPref.getString("cabina", "--");
+
+        lastIdBeacon = "";
 
 
         layout = view.findViewById(R.id.contenitore);
@@ -217,55 +221,58 @@ public class FragmentEmergenza extends Fragment  implements FunzioniCambiaBeacon
 
     public void newPath(String s) {
         s = s.substring(s.length()-5);
-        beaconsAllNodes = ((Home) getActivity()).getBeaconsAllNodes();
-        if(beaconsAllNodes == null){
-            return;
-        }
-        Nodo sorgente = beaconsAllNodes.get(s);
-        if(sorgente == null){
-            return;
-        }
-        //Nodo sorgente = new Nodo(beaconsAllNodes.get(s).getX(), beaconsAllNodes.get(s).getY(), beaconsAllNodes.get(s).getPiano());
-
-        Nodo uscitaPiano = null;
-        pianoGrafo = ((Home) getActivity()).getPianoGrafo();
-        if(pianoGrafo == null){
-            return;
-        }
-        grafo = pianoGrafo.get(sorgente.getPiano());
-        if(grafo != null){
-            Iterator it = beaconsAllNodes.entrySet().iterator();
-
-            while (it.hasNext()) {
-                Map.Entry entry = (Map.Entry)it.next();
-                Nodo n = (Nodo) entry.getValue();
-                if((n.getPiano() == sorgente.getPiano()) && ((n.getScala() == 3) || (n.getScala() == 1) || (n.getScala() == 2))){
-                    //uscitaPiano = new Nodo(n.getX(), n.getY(), n.getPiano());
-                    uscitaPiano = n;
-                    break;
-                }
+        if(!(lastIdBeacon.equals(s))) {
+            lastIdBeacon = s;
+            beaconsAllNodes = ((Home) getActivity()).getBeaconsAllNodes();
+            if (beaconsAllNodes == null) {
+                return;
             }
-            DijkstraShortestPath<Nodo, DefaultEdge> dijkstraAlg = new DijkstraShortestPath<>(grafo);
+            Nodo sorgente = beaconsAllNodes.get(s);
+            if (sorgente == null) {
+                return;
+            }
+            //Nodo sorgente = new Nodo(beaconsAllNodes.get(s).getX(), beaconsAllNodes.get(s).getY(), beaconsAllNodes.get(s).getPiano());
 
-            ShortestPathAlgorithm.SingleSourcePaths<Nodo, DefaultEdge> iPaths = dijkstraAlg.getPaths(sorgente);
-            List<Nodo> path = iPaths.getPath(uscitaPiano).getVertexList();
-            ArrayList<Nodo> result = new ArrayList<>(path);
-            if (result != null) {
-                if(result.size() >= 2){
-                    Nodo n1 = new Nodo( result.get(0).getX(), result.get(0).getY());
-                    Nodo n2 = new Nodo( result.get(1).getX(), result.get(1).getY());
-                    CustomViewEdge cve = new CustomViewEdge(view.getContext(), n1, n2);
-                    archi.add(cve);
-                    invertiCoordinate();
-                    cambiaArco();
-                }else {
-                    Toast.makeText(getView().getContext(), "Sei arrivato !!!", Toast.LENGTH_SHORT).show();
+            Nodo uscitaPiano = null;
+            pianoGrafo = ((Home) getActivity()).getPianoGrafo();
+            if (pianoGrafo == null) {
+                return;
+            }
+            grafo = pianoGrafo.get(sorgente.getPiano());
+            if (grafo != null) {
+                Iterator it = beaconsAllNodes.entrySet().iterator();
+
+                while (it.hasNext()) {
+                    Map.Entry entry = (Map.Entry) it.next();
+                    Nodo n = (Nodo) entry.getValue();
+                    if ((n.getPiano() == sorgente.getPiano()) && ((n.getScala() == 3) || (n.getScala() == 1) || (n.getScala() == 2))) {
+                        //uscitaPiano = new Nodo(n.getX(), n.getY(), n.getPiano());
+                        uscitaPiano = n;
+                        break;
+                    }
+                }
+                DijkstraShortestPath<Nodo, DefaultEdge> dijkstraAlg = new DijkstraShortestPath<>(grafo);
+
+                ShortestPathAlgorithm.SingleSourcePaths<Nodo, DefaultEdge> iPaths = dijkstraAlg.getPaths(sorgente);
+                List<Nodo> path = iPaths.getPath(uscitaPiano).getVertexList();
+                ArrayList<Nodo> result = new ArrayList<>(path);
+                if (result != null) {
+                    if (result.size() >= 2) {
+                        Nodo n1 = new Nodo(result.get(0).getX(), result.get(0).getY());
+                        Nodo n2 = new Nodo(result.get(1).getX(), result.get(1).getY());
+                        CustomViewEdge cve = new CustomViewEdge(view.getContext(), n1, n2);
+                        archi.add(cve);
+                        invertiCoordinate();
+                        cambiaArco();
+                    } else {
+                        Toast.makeText(getView().getContext(), "Sei arrivato !!!", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else {
+                    Toast.makeText(getView().getContext(), "Cammino non trovato!!", Toast.LENGTH_SHORT).show();
                 }
 
-            } else {
-                Toast.makeText(getView().getContext(), "Cammino non trovato!!", Toast.LENGTH_SHORT).show();
             }
-
         }
     }
 
