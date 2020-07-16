@@ -217,6 +217,10 @@ public class FragmentEmergenza extends Fragment  implements FunzioniCambiaBeacon
 
     public void newPath(String s) {
         s = s.substring(s.length()-5);
+        beaconsAllNodes = ((Home) getActivity()).getBeaconsAllNodes();
+        if(beaconsAllNodes == null){
+            return;
+        }
         Nodo sorgente = beaconsAllNodes.get(s);
         if(sorgente == null){
             return;

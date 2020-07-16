@@ -163,8 +163,8 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         String cognome = sharedPref.getString("cognome", "user");
         gruppo = sharedPref.getString("gruppo", "--");
         cabina = sharedPref.getString("cabina", "--");
-        topic = sharedPref.getString("topic", "#");
-
+        //topic = sharedPref.getString("topic", "#");
+        topic = "#";
         View menuLaterale = navigationView.getHeaderView(0);
         nomeUtente = menuLaterale.findViewById(R.id.nomeUtente);
         gruppoecabina = menuLaterale.findViewById(R.id.gruppoecabina);
