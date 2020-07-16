@@ -21,7 +21,7 @@ public class MqttHelper {
     public MqttAndroidClient mqttAndroidClient;
 
 
-    final String serverUri = "151.236.56.24:1883";
+    final String serverUri = "tcp://151.236.56.24:1883";
     final String username = "e3app";
     final String password = "e3appdev";
     final String clientId = "ExampleAndroidClient3";
