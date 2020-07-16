@@ -1,6 +1,8 @@
 package com.example.e3appv10.giorgio.Helper;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
@@ -13,6 +15,8 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import java.util.Random;
+
 /**
  * Created by Giovanni on 18/03/2019.
  */
@@ -20,14 +24,22 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 public class MqttHelper {
     public MqttAndroidClient mqttAndroidClient;
 
+    private SharedPreferences sharedPref;
 
     final String serverUri = "tcp://151.236.56.24:1883";
     final String username = "e3app";
     final String password = "e3appdev";
-    final String clientId = "ExampleAndroidClient3";
+    private String clientId;
+    //final String clientId = "e3appClientId";
     private String topic;
 
     public MqttHelper(Context context, String topic){
+
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        String gruppo = sharedPref.getString("gruppo", "0");
+        int codice = sharedPref.getInt("codice", 0);
+        this.clientId = "e3appClient" + gruppo + "" + codice;
+        System.out.println("RUNID : "+clientId);
         this.topic = topic;
         System.out.println("questo è il topic nell'helper"+topic);
         mqttAndroidClient = new MqttAndroidClient(context, serverUri, clientId);
@@ -45,7 +57,7 @@ public class MqttHelper {
     private void connect(){
         MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
         mqttConnectOptions.setAutomaticReconnect(true);
-        mqttConnectOptions.setCleanSession(false);
+        mqttConnectOptions.setCleanSession(true);
         mqttConnectOptions.setUserName(username);
         mqttConnectOptions.setPassword(password.toCharArray());
 

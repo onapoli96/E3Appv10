@@ -60,7 +60,7 @@ public class FragmentMessaggistica extends Fragment {
         listaMessaggiAdapter = new ListaMessaggiAdapter(view.getContext().getApplicationContext(), messaggi);
         listaMessaggi.setAdapter(listaMessaggiAdapter);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(view.getContext());
-        savedtopic = sharedPref.getString("topic", "msg/+");
+        savedtopic = sharedPref.getString("topic", "msg/#");
         gruppo = sharedPref.getString("gruppo", "--");
         codice = sharedPref.getInt("codice", 0);
 
