@@ -223,6 +223,9 @@ public class FragmentEmergenza extends Fragment  implements FunzioniCambiaBeacon
         s = s.substring(s.length()-5);
         if(!(lastIdBeacon.equals(s))) {
             lastIdBeacon = s;
+            if (((Home) getActivity()) == null) {
+                return;
+            }
             beaconsAllNodes = ((Home) getActivity()).getBeaconsAllNodes();
             if (beaconsAllNodes == null) {
                 return;

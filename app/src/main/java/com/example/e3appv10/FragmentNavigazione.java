@@ -311,6 +311,9 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
 
     public void newPath(String s) {
             s = s.substring(s.length()-5);
+            if (((Home) getActivity()) == null) {
+                return;
+            }
             beaconsAllNodes = ((Home) getActivity()).getBeaconsAllNodes();
             if(beaconsAllNodes == null){
                 return;
