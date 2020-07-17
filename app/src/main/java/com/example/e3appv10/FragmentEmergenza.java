@@ -261,6 +261,7 @@ public class FragmentEmergenza extends Fragment  implements FunzioniCambiaBeacon
                         Nodo n1 = new Nodo(result.get(0).getX(), result.get(0).getY());
                         Nodo n2 = new Nodo(result.get(1).getX(), result.get(1).getY());
                         CustomViewEdge cve = new CustomViewEdge(view.getContext(), n1, n2);
+                        archi.clear();
                         archi.add(cve);
                         if(result.size() >= 3){
                             Nodo n3 = new Nodo(result.get(1).getX(), result.get(1).getY());
