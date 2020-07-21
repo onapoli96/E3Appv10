@@ -216,7 +216,8 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
             fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.add(R.id.fragmentContainer, fragmentMappa);
             fragmentTransaction.commit();
-        } else if (id == R.id.annunci) {
+        }
+        /**else if (id == R.id.annunci) {
             fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.add(R.id.fragmentContainer, fragmentAnnunci);
             fragmentTransaction.commit();
@@ -224,7 +225,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
             fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.add(R.id.fragmentContainer, fragmentEventi);
             fragmentTransaction.commit();
-        }
+        }**/
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

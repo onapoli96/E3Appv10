@@ -10,6 +10,7 @@
             android:id="@+id/miaposizione"
             android:icon="@drawable/ic_position_icon"
             android:title="Mappa"/>
+        <!--
         <item
             android:id="@+id/annunci"
             android:icon="@drawable/ic_menu_gallery"
@@ -18,6 +19,7 @@
             android:id="@+id/eventi"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="Eventi"/>
+          -->
 
     </group>
 
