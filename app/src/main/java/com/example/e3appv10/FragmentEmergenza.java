@@ -102,6 +102,7 @@ public class FragmentEmergenza extends Fragment  implements FunzioniCambiaBeacon
     private float pivotY;
     private int lastX, lastY;
 
+    private String topic;
     private MqttHelper mqttHelper;
     private Nodo destinazione;
     private HashMap<Integer, Graph> pianoGrafo;
@@ -127,7 +128,7 @@ public class FragmentEmergenza extends Fragment  implements FunzioniCambiaBeacon
         //beaconHelper.startDetectingBeacons();
         view = inflater.inflate(R.layout.fragment_emergenza_layout, container, false);
         beaconHelper = new BeaconHelper(view.getContext(), this);
-        //mqttHelper = new MqttHelper(view.getContext().getApplicationContext(),topic);
+        mqttHelper = new MqttHelper(view.getContext().getApplicationContext(),topic);
         pianoGrafo = ((Home) getActivity()).getPianoGrafo();
         beaconsAllNodes = ((Home) getActivity()).getBeaconsAllNodes();
         sharedPref = PreferenceManager.getDefaultSharedPreferences(view.getContext());
@@ -234,6 +235,7 @@ public class FragmentEmergenza extends Fragment  implements FunzioniCambiaBeacon
             if (sorgente == null) {
                 return;
             }
+            inviaMessaggio("pos/"+codice, sorgente.getX()+ " "+ sorgente.getY());
             //Nodo sorgente = new Nodo(beaconsAllNodes.get(s).getX(), beaconsAllNodes.get(s).getY(), beaconsAllNodes.get(s).getPiano());
 
             Nodo uscitaPiano = null;
@@ -477,7 +479,7 @@ public class FragmentEmergenza extends Fragment  implements FunzioniCambiaBeacon
     public void onChangeSource(String idBeacon) {
 
         long tempo = Instant.now().getEpochSecond();
-        //inviaMessaggio("pos",nome.toUpperCase()+" "+ cognome.toUpperCase()+" "+ idBeacon+" "+ tempo );
+        inviaMessaggio("pos",nome.toUpperCase()+" "+ cognome.toUpperCase()+" "+ idBeacon+" "+ tempo );
         newPath(idBeacon);
     }
 }
