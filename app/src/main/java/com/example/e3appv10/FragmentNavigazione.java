@@ -420,6 +420,9 @@ public class FragmentNavigazione extends Fragment implements FunzioniCambiaBeaco
     private void inviaMessaggio(String topic, String messaggio){
         MqttMessage message = new MqttMessage(messaggio.getBytes());
         try {
+            if(mqttHelper == null){
+                mqttHelper = new MqttHelper(view.getContext().getApplicationContext(),this.topic);
+            }
             mqttHelper.publica(topic, message);
         } catch (MqttException e) {
             e.printStackTrace();
